@@ -448,10 +448,36 @@
               </ul>
           </li>
           <li>
-            <a href="#wip-below" class="toc-h1 toc-link" data-title="----------- WIP below">----------- WIP below</a>
-          </li>
-          <li>
             <a href="#social" class="toc-h1 toc-link" data-title="Social">Social</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#get-feed" class="toc-h2 toc-link" data-title="Get feed">Get feed</a>
+                  </li>
+                  <li>
+                    <a href="#fetch-a-user-profile" class="toc-h2 toc-link" data-title="Fetch a user profile">Fetch a user profile</a>
+                  </li>
+                  <li>
+                    <a href="#comment-on-a-recipe" class="toc-h2 toc-link" data-title="Comment on a recipe">Comment on a recipe</a>
+                  </li>
+                  <li>
+                    <a href="#like-a-recipe" class="toc-h2 toc-link" data-title="Like a recipe">Like a recipe</a>
+                  </li>
+                  <li>
+                    <a href="#unlike-a-recipe" class="toc-h2 toc-link" data-title="Unlike a recipe">Unlike a recipe</a>
+                  </li>
+                  <li>
+                    <a href="#follow-a-user" class="toc-h2 toc-link" data-title="Follow a user">Follow a user</a>
+                  </li>
+                  <li>
+                    <a href="#unfollow-a-user" class="toc-h2 toc-link" data-title="Unfollow a user">Unfollow a user</a>
+                  </li>
+                  <li>
+                    <a href="#report-a-recipe" class="toc-h2 toc-link" data-title="Report a recipe">Report a recipe</a>
+                  </li>
+                  <li>
+                    <a href="#report-a-user" class="toc-h2 toc-link" data-title="Report a user">Report a user</a>
+                  </li>
+              </ul>
           </li>
           <li>
             <a href="#health-records" class="toc-h1 toc-link" data-title="Health Records">Health Records</a>
@@ -482,20 +508,15 @@
                     <a href="#diet-restriction" class="toc-h2 toc-link" data-title="Diet Restriction">Diet Restriction</a>
                   </li>
                   <li>
-                    <a href="#food-allerty" class="toc-h2 toc-link" data-title="Food Allerty">Food Allerty</a>
+                    <a href="#food-allergy" class="toc-h2 toc-link" data-title="Food Allergy">Food Allergy</a>
                   </li>
               </ul>
           </li>
           <li>
+            <a href="#wip-below" class="toc-h1 toc-link" data-title="----------- WIP below">----------- WIP below</a>
+          </li>
+          <li>
             <a href="#b2b" class="toc-h1 toc-link" data-title="----- B2B">----- B2B</a>
-              <ul class="toc-list-h2">
-                  <li>
-                    <a href="#query-parameters" class="toc-h2 toc-link" data-title="Query Parameters">Query Parameters</a>
-                  </li>
-                  <li>
-                    <a href="#get-a-specific-kitten" class="toc-h2 toc-link" data-title="Get a Specific Kitten">Get a Specific Kitten</a>
-                  </li>
-              </ul>
           </li>
           <li>
             <a href="#errors" class="toc-h1 toc-link" data-title="Errors">Errors</a>
@@ -2568,211 +2589,470 @@ Note that it is purely going by recipe_hist_id. The user-specificity is enforced
   ]
 }
 </code></p>
-<h1 id='wip-below'>----------- WIP below</h1>
-<p>The below is WIP.</p>
-<h1 id='social'>Social</h1>
-<p>import { gql } from &quot;@apollo/client&quot;;</p>
+<h1 id='social'>Social</h1><h2 id='get-feed'>Get feed</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">query</span><span class="w"> </span><span class="n">GetFeed</span><span class="p">(</span><span class="w">
+  </span><span class="nv">$recipe_offset</span><span class="p">:</span><span class="w"> </span><span class="nb">Int</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$recipe_limit</span><span class="p">:</span><span class="w"> </span><span class="nb">Int</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$user_account_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!</span><span class="w">
+</span><span class="p">)</span><span class="w"> </span><span class="k">@cached</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">recipe</span><span class="p">(</span><span class="w">
+    </span><span class="n">offset</span><span class="p">:</span><span class="w"> </span><span class="nv">$recipe_offset</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">limit</span><span class="p">:</span><span class="w"> </span><span class="nv">$recipe_limit</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">order_by</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">created_at</span><span class="p">:</span><span class="w"> </span><span class="n">desc</span><span class="p">},</span><span class="w">
+    </span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">recipe_status_id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="n">COMPLETE</span><span class="p">},</span><span class="w"> 
+      </span><span class="n">user_account</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_or</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="n">uid</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_ilike</span><span class="p">:</span><span class="w"> </span><span class="s2">"%admin%"</span><span class="p">}},</span><span class="w">
+        </span><span class="p">{</span><span class="n">id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$user_account_id</span><span class="p">}},</span><span class="w">
+        </span><span class="p">{</span><span class="n">user_follows</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">follower_id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$user_account_id</span><span class="p">}}}]}}</span><span class="w">
+  </span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">id</span><span class="w">
+    </span><span class="n">user_account</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">uid</span><span class="w">
+      </span><span class="n">nickname</span><span class="w">
+      </span><span class="n">thumbnail_link</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+    </span><span class="n">link_pic</span><span class="w">
+    </span><span class="n">title</span><span class="w">
+    </span><span class="n">description</span><span class="w">
+    </span><span class="n">created_at</span><span class="w">
+    </span><span class="n">updated_at</span><span class="w">
+    </span><span class="n">comments</span><span class="p">(</span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">removed_at</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_is_null</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">}})</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">user_account</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="n">id</span><span class="w">
+        </span><span class="n">nickname</span><span class="w">
+        </span><span class="n">thumbnail_link</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+      </span><span class="n">comment</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+    </span><span class="n">likes_aggregate</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">aggregate</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="n">count</span><span class="p">(</span><span class="n">distinct</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">columns</span><span class="p">:</span><span class="w"> </span><span class="n">liker_id</span><span class="p">)</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+    </span><span class="n">likes</span><span class="p">(</span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">removed_at</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_is_null</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">},</span><span class="w"> </span><span class="n">user_account</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$user_account_id</span><span class="p">}}})</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">user_account</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="n">uid</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+  </span><span class="n">user_account</span><span class="p">(</span><span class="w">
+    </span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">_and</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w"> </span><span class="n">id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">_neq</span><span class="p">:</span><span class="w"> </span><span class="nv">$user_account_id</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">},</span><span class="w">              
+        </span><span class="p">{</span><span class="n">_not</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">user_follows</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">follower_id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$user_account_id</span><span class="w"> </span><span class="p">}}}}</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="n">order_by</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">recipes_aggregate</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">count</span><span class="p">:</span><span class="w"> </span><span class="n">desc</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w">
+    </span><span class="n">limit</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="w">
+  </span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">id</span><span class="w">
+    </span><span class="n">nickname</span><span class="w">
+    </span><span class="n">thumbnail_link</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+    </span><span class="err">"</span><span class="n">user_account_id</span><span class="err">":</span><span class="w"> </span><span class="err">"7177</span><span class="n">a1bb</span><span class="err">-875</span><span class="n">f</span><span class="err">-4836-939</span><span class="n">a</span><span class="err">-7600</span><span class="n">e7c134cd</span><span class="err">"</span><span class="w">
+    </span><span class="err">"</span><span class="n">recipe_offset</span><span class="err">":</span><span class="w"> </span><span class="err">0</span><span class="p">,</span><span class="w">
+    </span><span class="err">"</span><span class="n">recipe_limit</span><span class="err">":</span><span class="w"> </span><span class="err">10</span><span class="p">,</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Note that this query outputs five other users that we recommend to follow. However, currently we do not properly filter out those that the user is already following because of limitation in query method. We will revisit this.</p>
 
-<p>{
-  &quot;commenter_uid&quot;: &quot;CqznSvrThLfZjrDqlDQrFVhDwpI2&quot;,
-  &quot;post_id&quot;: &quot;7177a1bb-875f-4836-939a-7600e7c134cd&quot;,
-  &quot;comment&quot;:&quot;hi&quot;
-}</p>
-
-<p>export const GQL_COMMENT_RECIPE = gql<code>
-mutation InsertComment($commenter_id: uuid!, $recipe_id: uuid!, $comment: String!) {
-  insert_comments_one(object: {commenter_id: $commenter_id, recipe_id: $recipe_id, comment: $comment}) {
-    id
-  }
-}
-</code></p>
-
-<p>{
-  &quot;post_id&quot;: &quot;7177a1bb-875f-4836-939a-7600e7c134cd&quot;,
-  &quot;liker_uid&quot;:&quot;CqznSvrThLfZjrDqlDQrFVhDwpI2&quot;
-}</p>
-
-<p>export const GQL_LIKE_RECIPE = gql<code>
-mutation InsertLike($liker_id: uuid!, $recipe_id: uuid!) {
-  insert_likes_one(object: {liker_id: $liker_id, recipe_id: $recipe_id}){
-    id
-  }
-}
-</code></p>
-
-<p>export const GQL_UNLIKE_RECIPE = gql<code>
-mutation RemoveLike ($liker_id: uuid!, $recipe_id:uuid!){
-  update_likes(where: {liker_id: {_eq: $liker_id}, recipe_id: {_eq: $recipe_id}}, 
-    _set: {removed_at: now}){
-    returning {
-      id
-    }
-  }
-}
-</code></p>
-
-<p>{
+<p>TODO: <code>{user_follows: {follower_id: {_neq: $user_account_id}}}</code> put this back to filter out the accounts that user is already following.</p>
+<h3 id='parameters-18'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>user_account_id</td>
+<td>uuid</td>
+<td>the user&#39;s database-generated ID</td>
+</tr>
+<tr>
+<td>recipe_offset</td>
+<td>integer</td>
+<td>the number of recipes as offset</td>
+</tr>
+<tr>
+<td>recipe_limit</td>
+<td>integer</td>
+<td>limit in the number of recipes to return</td>
+</tr>
+</tbody></table>
+<h3 id='example-input-parameters-6'>Example input parameters</h3>
+<p><code>
+{
+    &quot;user_account_id&quot;: &quot;7177a1bb-875f-4836-939a-7600e7c134cd&quot;
     &quot;recipe_offset&quot;: 0,
     &quot;recipe_limit&quot;: 10,
-    &quot;uid&quot;: &quot;test&quot;
-  }
-export const GQL_GET_FEED_FOLLOWING = gql<code>
-query GetFeed(
-  $recipe_offset: Int!, 
-  $recipe_limit: Int!, 
-  $user_account_id: uuid!) @cached {
-  recipe(
-    offset: $recipe_offset, 
-    limit: $recipe_limit, 
-    order_by: {created_at: desc},
-    where: {
-      recipe_status_id: {_eq: COMPLETE}, 
-      user_account: {_or: [
-        {uid: {_ilike: &quot;%admin%&quot;}},
-        {id: {_eq: $user_account_id}},
-        {user_follows: {follower_id: {_eq: $user_account_id}}}]}}) {
-    id
-    user_account {
-      uid
-      nickname
-      thumbnail_link
-    }
-    link_pic
-    title
-    description
-    created_at
-    updated_at
-    comments(where: {removed_at: {_is_null: true}}) {
-      user_account {
-        id
-        nickname
-        thumbnail_link
-      }
-      comment
-    }
-    likes_aggregate {
-      aggregate {
-        count(distinct: true, columns: liker_id)
-      }
-    }
-    likes(where: {removed_at: {_is_null: true}, user_account: {id: {_eq: $user_account_id}}}) {
-      user_account {
-        uid
-      }
-    }
-  }
-  user_account(
-    where: {
-      _and: [
-        { id: { _neq: $user_account_id } },              
-        {_not: {user_follows: { follower_id: { _eq: $user_account_id }}}}
-      ]
-    },
-    order_by: { recipes_aggregate: { count: desc } }
-    limit: 5
-  ) {
-    id
-    nickname
-    thumbnail_link
-  }
-}
-</code>
-   {user_follows: {follower_id: {_neq: $user_account_id}}} TODO put this back to filter out the accounts that user is already following</p>
-
-<p>export const GQL_UNFOLLOW = gql<code>
-mutation UpdateUnfollow($follower_id: uuid!, $followee_id: uuid!) {
-  update_user_follow(where: {followee_id: {_eq: $followee_id}, follower_id: {_eq: $follower_id}}, _set: {removed_at: now}){
-    returning {
-      id
-    }
-  }
 }
 </code></p>
-
-<p>{
-  &quot;follower_uid&quot;: &quot;CqznSvrThLfZjrDqlDQrFVhDwpI2&quot;,
-  &quot;followee_uid&quot;: &quot;C83AqbDPRzdhPghTdIGRt6tl2Do2&quot;
-}</p>
-
-<p>export const GQL_FOLLOW = gql<code>
-mutation InsertFollow ($follower_id: uuid!, $followee_id: uuid!) {
-  insert_user_follow_one(object: {follower_id: $follower_id, followee_id: $followee_id}) {
-    id
-  }
+<h2 id='fetch-a-user-profile'>Fetch a user profile</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">query</span><span class="w"> </span><span class="n">fetchUserData</span><span class="p">(</span><span class="nv">$nickname</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">user_account</span><span class="p">(</span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">nickname</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$nickname</span><span class="p">}})</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">id</span><span class="w">
+    </span><span class="n">nickname</span><span class="w">
+    </span><span class="n">bio</span><span class="w">
+    </span><span class="n">link</span><span class="w">
+    </span><span class="n">user_type</span><span class="w">
+    </span><span class="n">thumbnail_link</span><span class="w">
+    </span><span class="n">user_follows</span><span class="p">(</span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">removed_at</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_is_null</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">}},</span><span class="w"> </span><span class="n">distinct_on</span><span class="p">:</span><span class="w"> </span><span class="n">follower_id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">follower_id</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+    </span><span class="n">userFollowsByFollowerId</span><span class="p">(</span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">removed_at</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_is_null</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">}},</span><span class="w"> </span><span class="n">distinct_on</span><span class="p">:</span><span class="w"> </span><span class="n">followee_id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">followee_id</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+    </span><span class="n">recipes</span><span class="p">(</span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_and</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">recipe_status_id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="n">COMPLETE</span><span class="p">},</span><span class="w"> 
+      </span><span class="n">user_account</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">user_status</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_nin</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="n">DEACTIVATED</span><span class="p">,</span><span class="w"> </span><span class="n">SUSPENDED</span><span class="p">]}}},</span><span class="w"> 
+      </span><span class="n">slug</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_is_null</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">}}</span><span class="w">
+    </span><span class="p">){</span><span class="w">
+      </span><span class="n">id</span><span class="w">
+      </span><span class="n">title</span><span class="w">
+      </span><span class="n">link_pic</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+    </span><span class="n">user_saved_recipes</span><span class="p">{</span><span class="w">
+      </span><span class="n">recipe</span><span class="p">{</span><span class="w">
+        </span><span class="n">id</span><span class="w">
+        </span><span class="n">title</span><span class="w">
+        </span><span class="n">link_pic</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="n">nickname</span><span class="p">:</span><span class="w"> </span><span class="err">"</span><span class="n">heartful</span><span class="err">-</span><span class="n">blw</span><span class="err">"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>This is used when one visits a user&#39;s page. This fetches data to populate the visited user&#39;s page.</p>
+<h3 id='parameters-19'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>nickname</td>
+<td>text</td>
+<td>nickname of the visitee</td>
+</tr>
+</tbody></table>
+<h3 id='example-input-parameters-7'>Example input parameters</h3>
+<p><code>
+{
+  nickname: &quot;heartful-blw&quot;
 }
 </code></p>
-
-<p>{
-  &quot;uid&quot;: &quot;test&quot;,
-  &quot;recipe_offset&quot;: 0,
-  &quot;recipe_limit&quot;: 10,
-}</p>
-
-<p>export const GQL_GET_USER = gql`
-query fetchUserData($nickname: String!) {
-  user_account(where: {nickname: {_eq: $nickname}}) {
-    id
-    nickname
-    bio
-    link
-    user_type
-    thumbnail_link
-    user_follows(where: {removed_at: {_is_null: true}}, distinct_on: follower_id) {
-      follower_id
-    }
-    userFollowsByFollowerId(where: {removed_at: {_is_null: true}}, distinct_on: followee_id) {
-      followee_id
-    }
-    recipes{
-      id
-      title
-      link_pic
-    }
-    user_saved_recipes{
-      recipe{
-        id
-        title
-        link_pic
-      }
-    }
-  }
-}</p>
-
-<p>`</p>
-
-<p>{
-  &quot;tag_filter&quot;: [&quot;ALLERGEN_FREE_EGG&quot;, &quot;STAGE_ONE&quot;]
-}
-export const GQL_GET_FEED_FOR_YOU = gql<code>
-query MyQuery($tag_filter:[tag_enum!]) {
-  recipe(where: {recipe_tags: {tag_id: {_in: $tag_filter,}}}) {
-    id
-    link_pic
-  }
+<h2 id='comment-on-a-recipe'>Comment on a recipe</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">InsertComment</span><span class="p">(</span><span class="nv">$commenter_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w"> </span><span class="nv">$recipe_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w"> </span><span class="nv">$comment</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">insert_comments_one</span><span class="p">(</span><span class="n">object</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">commenter_id</span><span class="p">:</span><span class="w"> </span><span class="nv">$commenter_id</span><span class="p">,</span><span class="w"> </span><span class="n">recipe_id</span><span class="p">:</span><span class="w"> </span><span class="nv">$recipe_id</span><span class="p">,</span><span class="w"> </span><span class="n">comment</span><span class="p">:</span><span class="w"> </span><span class="nv">$comment</span><span class="p">})</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">id</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="n">commenter_id</span><span class="p">:</span><span class="w"> </span><span class="err">"065</span><span class="n">d689d</span><span class="err">-2</span><span class="n">b52</span><span class="err">-4</span><span class="n">cf1</span><span class="err">-86</span><span class="n">b1</span><span class="err">-</span><span class="n">a221380e1b28</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="n">recipe_id</span><span class="p">:</span><span class="w"> </span><span class="err">"065</span><span class="n">d689d</span><span class="err">-2</span><span class="n">b52</span><span class="err">-4</span><span class="n">cf1</span><span class="err">-86</span><span class="n">b1</span><span class="err">-</span><span class="n">a221380e1b28</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="n">comment</span><span class="p">:</span><span class="w"> </span><span class="err">"</span><span class="n">Looking</span><span class="w"> </span><span class="n">delicious</span><span class="p">!</span><span class="err">"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='parameters-20'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>user_account_id</td>
+<td>uuid</td>
+<td>the user&#39;s database-generated ID</td>
+</tr>
+<tr>
+<td>recipe_id</td>
+<td>uuid</td>
+<td>recipe ID</td>
+</tr>
+<tr>
+<td>comment</td>
+<td>text</td>
+<td>comment</td>
+</tr>
+</tbody></table>
+<h3 id='example-input-parameters-8'>Example input parameters</h3>
+<p><code>
+{
+  commenter_id: &quot;065d689d-2b52-4cf1-86b1-a221380e1b28&quot;,
+  recipe_id: &quot;065d689d-2b52-4cf1-86b1-a221380e1b28&quot;,
+  comment: &quot;Looking delicious!&quot;
 }
 </code></p>
-
-<p>export const GQL_INSERT_RECIPE_FLAG = gql`
-mutation ReportRecipe($reporter_id: uuid = &quot;&quot;, $recipe_id: uuid = &quot;&quot;) {
-  insert_flag(objects: {reporter_id: $reporter_id, recipe_id: $recipe_id}) {
-    returning{
-    reporter_id<br>
-    }
-  }
-}</p>
-
-<p>`</p>
-
-<p>export const GQL_INSERT_USER_FLAG = gql`
-mutation ReportUser($reporter_id: uuid = &quot;&quot;, $user_id: uuid = &quot;&quot;) {
-  insert_flag(objects: {reporter_id: $reporter_id, user_id: $user_id}) {
-    returning{
-    reporter_id<br>
-    }
-  }
-}</p>
-
-<p>`</p>
+<h2 id='like-a-recipe'>Like a recipe</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">InsertLike</span><span class="p">(</span><span class="nv">$liker_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w"> </span><span class="nv">$recipe_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">insert_likes_one</span><span class="p">(</span><span class="n">object</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">liker_id</span><span class="p">:</span><span class="w"> </span><span class="nv">$liker_id</span><span class="p">,</span><span class="w"> </span><span class="n">recipe_id</span><span class="p">:</span><span class="w"> </span><span class="nv">$recipe_id</span><span class="p">}){</span><span class="w">
+    </span><span class="n">id</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">liker_id</span><span class="err">":</span><span class="w"> </span><span class="err">"7177</span><span class="n">a1bb</span><span class="err">-875</span><span class="n">f</span><span class="err">-4836-939</span><span class="n">a</span><span class="err">-7600</span><span class="n">e7c134cd</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">recipe_id</span><span class="err">":</span><span class="w"> </span><span class="err">"7177</span><span class="n">a1bb</span><span class="err">-875</span><span class="n">f</span><span class="err">-4836-939</span><span class="n">a</span><span class="err">-7600</span><span class="n">e7c134cd</span><span class="err">"</span><span class="p">,</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='parameters-21'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>liker_id</td>
+<td>uuid</td>
+<td>the user&#39;s database-generated ID</td>
+</tr>
+<tr>
+<td>recipe_id</td>
+<td>uuid</td>
+<td>recipe ID</td>
+</tr>
+</tbody></table>
+<h3 id='example-input-parameters-9'>Example input parameters</h3>
+<p><code>
+{
+  &quot;liker_id&quot;: &quot;7177a1bb-875f-4836-939a-7600e7c134cd&quot;,
+  &quot;recipe_id&quot;: &quot;7177a1bb-875f-4836-939a-7600e7c134cd&quot;,
+}
+</code></p>
+<h2 id='unlike-a-recipe'>Unlike a recipe</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">RemoveLike</span><span class="w"> </span><span class="p">(</span><span class="nv">$liker_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w"> </span><span class="nv">$recipe_id</span><span class="p">:</span><span class="n">uuid</span><span class="p">!){</span><span class="w">
+  </span><span class="n">update_likes</span><span class="p">(</span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">liker_id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$liker_id</span><span class="p">},</span><span class="w"> </span><span class="n">recipe_id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$recipe_id</span><span class="p">}},</span><span class="w"> 
+    </span><span class="n">_set</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">removed_at</span><span class="p">:</span><span class="w"> </span><span class="n">now</span><span class="p">}){</span><span class="w">
+    </span><span class="n">returning</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">id</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">liker_id</span><span class="err">":</span><span class="w"> </span><span class="err">"7177</span><span class="n">a1bb</span><span class="err">-875</span><span class="n">f</span><span class="err">-4836-939</span><span class="n">a</span><span class="err">-7600</span><span class="n">e7c134cd</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">recipe_id</span><span class="err">":</span><span class="w"> </span><span class="err">"7177</span><span class="n">a1bb</span><span class="err">-875</span><span class="n">f</span><span class="err">-4836-939</span><span class="n">a</span><span class="err">-7600</span><span class="n">e7c134cd</span><span class="err">"</span><span class="p">,</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='parameters-22'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>liker_id</td>
+<td>uuid</td>
+<td>the user&#39;s database-generated ID</td>
+</tr>
+<tr>
+<td>recipe_id</td>
+<td>uuid</td>
+<td>recipe ID</td>
+</tr>
+</tbody></table>
+<h3 id='example-input-parameters-10'>Example input parameters</h3>
+<p><code>
+{
+  &quot;liker_id&quot;: &quot;7177a1bb-875f-4836-939a-7600e7c134cd&quot;,
+  &quot;recipe_id&quot;: &quot;7177a1bb-875f-4836-939a-7600e7c134cd&quot;,
+}
+</code></p>
+<h2 id='follow-a-user'>Follow a user</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">InsertFollow</span><span class="w"> </span><span class="p">(</span><span class="nv">$follower_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w"> </span><span class="nv">$followee_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">insert_user_follow_one</span><span class="p">(</span><span class="n">object</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">follower_id</span><span class="p">:</span><span class="w"> </span><span class="nv">$follower_id</span><span class="p">,</span><span class="w"> </span><span class="n">followee_id</span><span class="p">:</span><span class="w"> </span><span class="nv">$followee_id</span><span class="p">})</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">id</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">follower_id</span><span class="err">":</span><span class="w"> </span><span class="err">"7177</span><span class="n">a1bb</span><span class="err">-875</span><span class="n">f</span><span class="err">-4836-939</span><span class="n">a</span><span class="err">-7600</span><span class="n">e7c134cd</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">followee_id</span><span class="err">":</span><span class="w"> </span><span class="err">"7177</span><span class="n">a1bb</span><span class="err">-875</span><span class="n">f</span><span class="err">-4836-939</span><span class="n">a</span><span class="err">-7600</span><span class="n">e7c134cd</span><span class="err">"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Only a follower can insert a relationship here. </p>
+<h3 id='parameters-23'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>follower_id</td>
+<td>uuid</td>
+<td>the user ID of the follower</td>
+</tr>
+<tr>
+<td>followee_id</td>
+<td>uuid</td>
+<td>the user ID of the followee</td>
+</tr>
+</tbody></table>
+<h3 id='example-input-parameters-11'>Example input parameters</h3>
+<p><code>
+{
+  &quot;follower_id&quot;: &quot;7177a1bb-875f-4836-939a-7600e7c134cd&quot;,
+  &quot;followee_id&quot;: &quot;7177a1bb-875f-4836-939a-7600e7c134cd&quot;
+}
+</code></p>
+<h2 id='unfollow-a-user'>Unfollow a user</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">UpdateUnfollow</span><span class="p">(</span><span class="nv">$follower_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w"> </span><span class="nv">$followee_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">update_user_follow</span><span class="p">(</span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">followee_id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$followee_id</span><span class="p">},</span><span class="w"> </span><span class="n">follower_id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$follower_id</span><span class="p">}},</span><span class="w"> </span><span class="n">_set</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">removed_at</span><span class="p">:</span><span class="w"> </span><span class="n">now</span><span class="p">}){</span><span class="w">
+    </span><span class="n">returning</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">id</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">follower_id</span><span class="err">":</span><span class="w"> </span><span class="err">"7177</span><span class="n">a1bb</span><span class="err">-875</span><span class="n">f</span><span class="err">-4836-939</span><span class="n">a</span><span class="err">-7600</span><span class="n">e7c134cd</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">followee_id</span><span class="err">":</span><span class="w"> </span><span class="err">"7177</span><span class="n">a1bb</span><span class="err">-875</span><span class="n">f</span><span class="err">-4836-939</span><span class="n">a</span><span class="err">-7600</span><span class="n">e7c134cd</span><span class="err">"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Only a follower can delete a relationship here. </p>
+<h3 id='parameters-24'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>follower_id</td>
+<td>uuid</td>
+<td>the user ID of the follower</td>
+</tr>
+<tr>
+<td>followee_id</td>
+<td>uuid</td>
+<td>the user ID of the followee</td>
+</tr>
+</tbody></table>
+<h3 id='example-input-parameters-12'>Example input parameters</h3>
+<p><code>
+{
+  &quot;follower_id&quot;: &quot;7177a1bb-875f-4836-939a-7600e7c134cd&quot;,
+  &quot;followee_id&quot;: &quot;7177a1bb-875f-4836-939a-7600e7c134cd&quot;
+}
+</code></p>
+<h2 id='report-a-recipe'>Report a recipe</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">ReportRecipe</span><span class="p">(</span><span class="nv">$reporter_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> </span><span class="nv">$recipe_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">insert_flag</span><span class="p">(</span><span class="n">objects</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">reporter_id</span><span class="p">:</span><span class="w"> </span><span class="nv">$reporter_id</span><span class="p">,</span><span class="w"> </span><span class="n">recipe_id</span><span class="p">:</span><span class="w"> </span><span class="nv">$recipe_id</span><span class="p">})</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">returning</span><span class="p">{</span><span class="w">
+    </span><span class="n">reporter_id</span><span class="w">      
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">reporter_id</span><span class="err">":</span><span class="w"> </span><span class="err">"7177</span><span class="n">a1bb</span><span class="err">-875</span><span class="n">f</span><span class="err">-4836-939</span><span class="n">a</span><span class="err">-7600</span><span class="n">e7c134cd</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">recipe_id</span><span class="err">":</span><span class="w"> </span><span class="err">"7177</span><span class="n">a1bb</span><span class="err">-875</span><span class="n">f</span><span class="err">-4836-939</span><span class="n">a</span><span class="err">-7600</span><span class="n">e7c134cd</span><span class="err">"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Only a follower can delete a relationship here. </p>
+<h3 id='parameters-25'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>reporter_id</td>
+<td>uuid</td>
+<td>the user ID</td>
+</tr>
+<tr>
+<td>recipe_id</td>
+<td>uuid</td>
+<td>the recipe ID</td>
+</tr>
+</tbody></table>
+<h3 id='example-input-parameters-13'>Example input parameters</h3>
+<p><code>
+{
+  &quot;reporter_id&quot;: &quot;7177a1bb-875f-4836-939a-7600e7c134cd&quot;,
+  &quot;recipe_id&quot;: &quot;7177a1bb-875f-4836-939a-7600e7c134cd&quot;
+}
+</code></p>
+<h2 id='report-a-user'>Report a user</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">ReportUser</span><span class="p">(</span><span class="nv">$reporter_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> </span><span class="nv">$user_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">insert_flag</span><span class="p">(</span><span class="n">objects</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">reporter_id</span><span class="p">:</span><span class="w"> </span><span class="nv">$reporter_id</span><span class="p">,</span><span class="w"> </span><span class="n">user_id</span><span class="p">:</span><span class="w"> </span><span class="nv">$user_id</span><span class="p">})</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">returning</span><span class="p">{</span><span class="w">
+    </span><span class="n">reporter_id</span><span class="w">      
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">reporter_id</span><span class="err">":</span><span class="w"> </span><span class="err">"7177</span><span class="n">a1bb</span><span class="err">-875</span><span class="n">f</span><span class="err">-4836-939</span><span class="n">a</span><span class="err">-7600</span><span class="n">e7c134cd</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">user_id</span><span class="err">":</span><span class="w"> </span><span class="err">"7177</span><span class="n">a1bb</span><span class="err">-875</span><span class="n">f</span><span class="err">-4836-939</span><span class="n">a</span><span class="err">-7600</span><span class="n">e7c134cd</span><span class="err">"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Only a follower can delete a relationship here. </p>
+<h3 id='parameters-26'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>reporter_id</td>
+<td>uuid</td>
+<td>ID of the user that is being flagged</td>
+</tr>
+<tr>
+<td>uer_id</td>
+<td>uuid</td>
+<td>ID of the user who is reporting</td>
+</tr>
+</tbody></table>
+<h3 id='example-input-parameters-14'>Example input parameters</h3>
+<p><code>
+{
+  &quot;reporter_id&quot;: &quot;7177a1bb-875f-4836-939a-7600e7c134cd&quot;,
+  &quot;recipe_id&quot;: &quot;7177a1bb-875f-4836-939a-7600e7c134cd&quot;
+}
+</code></p>
 <h1 id='health-records'>Health Records</h1>
 <p>Health records include growth data, and food reaction.</p>
 <h2 id='growth-records'>Growth Records</h2><h3 id='create'>Create</h3><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">EnterGrowthData</span><span class="p">(</span><span class="nv">$growth</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="n">baby_growth_hist_insert_input</span><span class="p">!]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{})</span><span class="w"> </span><span class="p">{</span><span class="w">
@@ -2855,9 +3135,9 @@ mutation ReportUser($reporter_id: uuid = &quot;&quot;, $user_id: uuid = &quot;&q
 <td>the growth measure for weight, height, or bmi</td>
 </tr>
 </tbody></table>
-<h3 id='read'>Read</h3>
-<p>This part is automatically pulled in when app is loaded with proper account information</p>
-<h3 id='update'>Update</h3><h3 id='delete'>Delete</h3>
+<h3 id='update'>Update</h3>
+<p>Currently this functionality is not implemented. Users delete a record and re-enter the data.</p>
+<h3 id='delete'>Delete</h3>
 <p>Currently this functionality deletes ALL growth data in the given ageDays for the baby.</p>
 <div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">DeleteGrowthData</span><span class="p">(</span><span class="nv">$baby_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w"> </span><span class="nv">$ageDays</span><span class="p">:</span><span class="w"> </span><span class="nb">Int</span><span class="p">!)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">delete_baby_growth_hist</span><span class="p">(</span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_and</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">baby_id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$baby_id</span><span class="p">},</span><span class="w"> </span><span class="n">days</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$ageDays</span><span class="p">}}}){</span><span class="w">
@@ -2902,7 +3182,62 @@ mutation ReportUser($reporter_id: uuid = &quot;&quot;, $user_id: uuid = &quot;&q
       </span><span class="p">}</span><span class="w">
     </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre></div><h3 id='read-2'>Read</h3><h3 id='update-2'>Update</h3><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">UpdateReaction</span><span class="p">(</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="n">user_account_id</span><span class="p">:</span><span class="w"> </span><span class="err">"</span><span class="n">ea39b907</span><span class="err">-6953-4354-</span><span class="n">abe4</span><span class="err">-99</span><span class="n">c441e5b1b3</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="n">entered_at</span><span class="p">:</span><span class="w"> </span><span class="err">"2024-11-03"</span><span class="w">
+  </span><span class="n">baby_profile_id</span><span class="p">:</span><span class="w"> </span><span class="err">"</span><span class="n">ea39b907</span><span class="err">-6953-4354-</span><span class="n">abe4</span><span class="err">-99</span><span class="n">c441e5b1b3</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="n">reaction</span><span class="p">:</span><span class="w"> </span><span class="err">"</span><span class="n">HIVE</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="n">note</span><span class="p">:</span><span class="w"> </span><span class="err">"</span><span class="n">Got</span><span class="w"> </span><span class="n">hive</span><span class="p">...</span><span class="err">"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='parameters-27'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>user_account_id</td>
+<td>uuid</td>
+<td>database-generated ID of the user</td>
+</tr>
+<tr>
+<td>baby_profile_id</td>
+<td>uuid</td>
+<td>the baby&#39;s database-generated ID</td>
+</tr>
+<tr>
+<td>entered_at</td>
+<td>timestamp</td>
+<td>the record time</td>
+</tr>
+<tr>
+<td>reaction</td>
+<td>enum</td>
+<td>reaction types (see Codes)</td>
+</tr>
+<tr>
+<td>note</td>
+<td>text</td>
+<td>description of the reaction</td>
+</tr>
+</tbody></table>
+<h3 id='example-input-parameter-5'>Example input parameter</h3>
+<p><code>
+{
+  user_account_id: &quot;ea39b907-6953-4354-abe4-99c441e5b1b3&quot;,
+  entered_at: &quot;2024-11-03&quot;
+  baby_profile_id: &quot;ea39b907-6953-4354-abe4-99c441e5b1b3&quot;,
+  reaction: &quot;HIVE&quot;,
+  note: &quot;Got hive...&quot;
+}
+</code></p>
+<h3 id='update-2'>Update</h3><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">UpdateReaction</span><span class="p">(</span><span class="w">
   </span><span class="nv">$id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w"> 
   </span><span class="nv">$entered_at</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!</span><span class="w">
   </span><span class="nv">$note</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> 
@@ -2917,7 +3252,55 @@ mutation ReportUser($reporter_id: uuid = &quot;&quot;, $user_id: uuid = &quot;&q
       </span><span class="p">}</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre></div><h3 id='delete-2'>Delete</h3><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">DeleteReaction</span><span class="p">(</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="n">id</span><span class="p">:</span><span class="w"> </span><span class="err">"</span><span class="n">ea39b907</span><span class="err">-6953-4354-</span><span class="n">abe4</span><span class="err">-99</span><span class="n">c441e5b1b3</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="n">entered_at</span><span class="p">:</span><span class="w"> </span><span class="err">"2024-11-03"</span><span class="w">
+  </span><span class="n">reaction</span><span class="p">:</span><span class="w"> </span><span class="err">"</span><span class="n">HIVE</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="n">note</span><span class="p">:</span><span class="w"> </span><span class="err">"</span><span class="n">Got</span><span class="w"> </span><span class="n">hive</span><span class="p">...</span><span class="err">"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='parameters-28'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>uuid</td>
+<td>ID of existing reaction entry</td>
+</tr>
+<tr>
+<td>entered_at</td>
+<td>timestamp</td>
+<td>the record time</td>
+</tr>
+<tr>
+<td>reaction</td>
+<td>enum</td>
+<td>reaction types (see Codes)</td>
+</tr>
+<tr>
+<td>note</td>
+<td>text</td>
+<td>description of the reaction</td>
+</tr>
+</tbody></table>
+<h3 id='example-input-parameter-6'>Example input parameter</h3>
+<p><code>
+{
+  id: &quot;ea39b907-6953-4354-abe4-99c441e5b1b3&quot;,
+  entered_at: &quot;2024-11-03&quot;
+  reaction: &quot;HIVE&quot;,
+  note: &quot;Got hive...&quot;
+}
+</code></p>
+<h3 id='delete-2'>Delete</h3><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">DeleteReaction</span><span class="p">(</span><span class="w">
   </span><span class="nv">$id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w"> 
 </span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">update_baby_reaction_hist</span><span class="p">(</span><span class="w">
@@ -2929,7 +3312,34 @@ mutation ReportUser($reporter_id: uuid = &quot;&quot;, $user_id: uuid = &quot;&q
     </span><span class="p">}</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre></div><h1 id='food-tracking'>Food Tracking</h1>
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="n">id</span><span class="p">:</span><span class="w"> </span><span class="err">"</span><span class="n">ea39b907</span><span class="err">-6953-4354-</span><span class="n">abe4</span><span class="err">-99</span><span class="n">c441e5b1b3</span><span class="err">"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='parameters-29'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>uuid</td>
+<td>ID of existing record entry</td>
+</tr>
+</tbody></table>
+<h3 id='example-input-parameter-7'>Example input parameter</h3>
+<p><code>
+{
+  id: &quot;ea39b907-6953-4354-abe4-99c441e5b1b3&quot;
+}
+</code></p>
+<h1 id='food-tracking'>Food Tracking</h1>
 <p>Babies are supposed to get introduced to one new food at a time. Food tracking is to track which foods got introduced.</p>
 <h2 id='update-food-intro-status'>Update food intro status</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">UpdateIngIntroStatus</span><span class="p">(</span><span class="w">
   </span><span class="nv">$baby_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w"> 
@@ -2948,51 +3358,2498 @@ mutation ReportUser($reporter_id: uuid = &quot;&quot;, $user_id: uuid = &quot;&q
     </span><span class="n">id</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre></div><h1 id='codes'>Codes</h1><h2 id='recipe-tag'>Recipe Tag</h2><h2 id='diet-restriction'>Diet Restriction</h2><h2 id='food-allerty'>Food Allerty</h2><h1 id='b2b'>----- B2B</h1>
-<p><code>GET http://example.com/api/kittens</code></p>
-<h3 id='query-parameters'>Query Parameters</h3>
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="n">baby_id</span><span class="p">:</span><span class="w"> </span><span class="err">"</span><span class="n">ea39b907</span><span class="err">-6953-4354-</span><span class="n">abe4</span><span class="err">-99</span><span class="n">c441e5b1b3</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="n">ing_intro_id</span><span class="p">:</span><span class="w"> </span><span class="err">"</span><span class="n">ea39b907</span><span class="err">-6953-4354-</span><span class="n">abe4</span><span class="err">-99</span><span class="n">c441e5b1b3</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="n">attempted_at</span><span class="p">:</span><span class="w"> </span><span class="err">"2024-11-04"</span><span class="p">,</span><span class="w">
+  </span><span class="n">mastered_at</span><span class="p">:</span><span class="w"> </span><span class="n">null</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='parameters-30'>Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
-<th>Default</th>
+<th>Type</th>
 <th>Description</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>include_cats</td>
-<td>false</td>
-<td>If set to true, the result will also include cats.</td>
+<td>baby_id</td>
+<td>uuid</td>
+<td>baby ID</td>
 </tr>
 <tr>
-<td>available</td>
-<td>true</td>
-<td>If set to false, the result will include kittens that have already been adopted.</td>
+<td>ing_intro_id</td>
+<td>uuid</td>
+<td>food item ID</td>
+</tr>
+<tr>
+<td>attempted_at</td>
+<td>timestamp</td>
+<td>timestamp of first attempting this food</td>
+</tr>
+<tr>
+<td>mastered_at</td>
+<td>timestamp</td>
+<td>timestamp of mastering this food intro</td>
 </tr>
 </tbody></table>
-
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-<h2 id='get-a-specific-kitten'>Get a Specific Kitten</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'kittn'</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="no">Kittn</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="p">.</span><span class="nf">kittens</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</code></pre></div>
-<blockquote>
-<p>The above command returns JSON structured like this:</p>
-</blockquote>
-<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Max"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unknown"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre></div>
-<p>This endpoint retrieves a specific kitten.</p>
-
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
-<h1 id='errors'>Errors</h1>
+<h3 id='example-input-parameter-8'>Example input parameter</h3>
+<p><code>
+{
+  baby_id: &quot;ea39b907-6953-4354-abe4-99c441e5b1b3&quot;,
+  ing_intro_id: &quot;ea39b907-6953-4354-abe4-99c441e5b1b3&quot;,
+  attempted_at: &quot;2024-11-04&quot;,
+  mastered_at: null
+}
+</code></p>
+<h1 id='codes'>Codes</h1><h2 id='recipe-tag'>Recipe Tag</h2>
+<table><thead>
+<tr>
+<th>Value</th>
+<th>Comment</th>
+<th>Type</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>COURSE_APPETIZER</td>
+<td>Appetizers</td>
+<td>Course</td>
+</tr>
+<tr>
+<td>COURSE_BEVERAGES</td>
+<td>Beverages</td>
+<td>Course</td>
+</tr>
+<tr>
+<td>COURSE_BREADS</td>
+<td>Breads</td>
+<td>Course</td>
+</tr>
+<tr>
+<td>COURSE_BREAKFAST</td>
+<td>Breakfast</td>
+<td>Course</td>
+</tr>
+<tr>
+<td>COURSE_DESSERTS</td>
+<td>Desserts</td>
+<td>Course</td>
+</tr>
+<tr>
+<td>COURSE_MAIN</td>
+<td>Main dishes</td>
+<td>Course</td>
+</tr>
+<tr>
+<td>COURSE_PUREE</td>
+<td>Purees</td>
+<td>Course</td>
+</tr>
+<tr>
+<td>COURSE_SALADS</td>
+<td>Salads</td>
+<td>Course</td>
+</tr>
+<tr>
+<td>COURSE_SANDWICHES</td>
+<td>Sandwiches</td>
+<td>Course</td>
+</tr>
+<tr>
+<td>COURSE_SAUCE</td>
+<td>Dressings and sauces</td>
+<td>Course</td>
+</tr>
+<tr>
+<td>COURSE_SIDE</td>
+<td>Sides</td>
+<td>Course</td>
+</tr>
+<tr>
+<td>COURSE_SNACK</td>
+<td>Snack</td>
+<td>Course</td>
+</tr>
+<tr>
+<td>COURSE_SOUP</td>
+<td>Soups and stews</td>
+<td>Course</td>
+</tr>
+<tr>
+<td>GOALS_VEGGIES</td>
+<td>Vegetables and fruits</td>
+<td>Nutrition Goal</td>
+</tr>
+<tr>
+<td>GOALS_SEAFOOD</td>
+<td>Seafoods</td>
+<td>Nutrition Goal</td>
+</tr>
+<tr>
+<td>GOALS_GRAINS</td>
+<td>Whole grains</td>
+<td>Nutrition Goal</td>
+</tr>
+<tr>
+<td>GOALS_FAT_FREE</td>
+<td>Fat free or low</td>
+<td>Nutrition Goal</td>
+</tr>
+<tr>
+<td>GOALS_PROTEIN</td>
+<td>Vary protein options</td>
+<td>Nutrition Goal</td>
+</tr>
+<tr>
+<td>GOALS_CALCIUM</td>
+<td>Calcium</td>
+<td>Nutrition Goal</td>
+</tr>
+<tr>
+<td>GOALS_LOW_SAT_FAT</td>
+<td>Low saturated fat</td>
+<td>Nutrition Goal</td>
+</tr>
+<tr>
+<td>GOALS_LOW_SODIUM</td>
+<td>Low sodium</td>
+<td>Nutrition Goal</td>
+</tr>
+<tr>
+<td>FOODGROUP_FRUITS</td>
+<td>Fruits</td>
+<td>Food Group</td>
+</tr>
+<tr>
+<td>FOODGROUP_VEGETABLES</td>
+<td>Vegetables</td>
+<td>Food Group</td>
+</tr>
+<tr>
+<td>FOODGROUP_GRAINS</td>
+<td>Grains</td>
+<td>Food Group</td>
+</tr>
+<tr>
+<td>FOODGROUP_PROTEINS</td>
+<td>Proteins</td>
+<td>Food Group</td>
+</tr>
+<tr>
+<td>FOODGROUP_DAIRY</td>
+<td>Dairy</td>
+<td>Food Group</td>
+</tr>
+<tr>
+<td>EQUIP_BLENDER</td>
+<td>Blender</td>
+<td>Equipment</td>
+</tr>
+<tr>
+<td>EQUIP_NOTHING</td>
+<td>No equipment needed</td>
+<td>Equipment</td>
+</tr>
+<tr>
+<td>EQUIP_GRILL</td>
+<td>Grill</td>
+<td>Equipment</td>
+</tr>
+<tr>
+<td>EQUIP_MICROWAVE</td>
+<td>Microwave</td>
+<td>Equipment</td>
+</tr>
+<tr>
+<td>EQUIP_OVEN</td>
+<td>Oven</td>
+<td>Equipment</td>
+</tr>
+<tr>
+<td>EQUIP_STOVETOP</td>
+<td>Stovetop</td>
+<td>Equipment</td>
+</tr>
+<tr>
+<td>EQUIP_SLOW_COOKER</td>
+<td>Slow cooker</td>
+<td>Equipment</td>
+</tr>
+<tr>
+<td>EQUIP_UTENSIL</td>
+<td>Forks and spoons</td>
+<td>Equipment</td>
+</tr>
+<tr>
+<td>EQUIP_TOASTER</td>
+<td>Toaster</td>
+<td>Equipment</td>
+</tr>
+<tr>
+<td>EQUIP_ICE_CUBE</td>
+<td>Ice cube trays</td>
+<td>Equipment</td>
+</tr>
+<tr>
+<td>CUISINE_AMERICAN</td>
+<td>American</td>
+<td>Cuisine</td>
+</tr>
+<tr>
+<td>CUISINE_ASIAN</td>
+<td>Asian</td>
+<td>Cuisine</td>
+</tr>
+<tr>
+<td>CUISINE_HISPANIC</td>
+<td>Hispanic</td>
+<td>Cuisine</td>
+</tr>
+<tr>
+<td>CUISINE_MEDITERRANEAN</td>
+<td>Mediterranean</td>
+<td>Cuisine</td>
+</tr>
+<tr>
+<td>CUISINE_MIDDLE_EASTERN</td>
+<td>Middle eastern</td>
+<td>Cuisine</td>
+</tr>
+<tr>
+<td>CUISINE_NATIVE_AMERICAN</td>
+<td>Native American</td>
+<td>Cuisine</td>
+</tr>
+<tr>
+<td>CUISINE_SOUTHERN</td>
+<td>Southern</td>
+<td>Cuisine</td>
+</tr>
+<tr>
+<td>CUISINE_VEGETARIAN</td>
+<td>Vegetarian</td>
+<td>Cuisine</td>
+</tr>
+<tr>
+<td>CUISINE_VEGAN</td>
+<td>Vegan</td>
+<td>Cuisine</td>
+</tr>
+<tr>
+<td>CUISINE_HALAL</td>
+<td>Halal</td>
+<td>Cuisine</td>
+</tr>
+<tr>
+<td>CUISINE_KOSHER</td>
+<td>Kosher</td>
+<td>Cuisine</td>
+</tr>
+<tr>
+<td>SEASONAL_EASTER</td>
+<td>Easter</td>
+<td>Seasonal</td>
+</tr>
+<tr>
+<td>SEASONAL_THANKSGIVING</td>
+<td>Thanksgiving</td>
+<td>Seasonal</td>
+</tr>
+<tr>
+<td>SEASONAL_HANUKKAH</td>
+<td>Hanukkah</td>
+<td>Seasonal</td>
+</tr>
+<tr>
+<td>SEASONAL_CHRISTMAS</td>
+<td>Christmas</td>
+<td>Seasonal</td>
+</tr>
+<tr>
+<td>SEASONAL_NEW_YEAR</td>
+<td>New year</td>
+<td>Seasonal</td>
+</tr>
+<tr>
+<td>SEASONAL_LUNAR_NEW_YEAR</td>
+<td>Lunar new year</td>
+<td>Seasonal</td>
+</tr>
+<tr>
+<td>SEASONAL_CINCO_DE_MAYO</td>
+<td>Cinco de mayo</td>
+<td>Seasonal</td>
+</tr>
+<tr>
+<td>ALLERGEN_INTRO_MILK</td>
+<td>Allergen Intro (Milk)</td>
+<td>Allergen Intro</td>
+</tr>
+<tr>
+<td>ALLERGEN_INTRO_EGG</td>
+<td>Allergen Intro (Egg)</td>
+<td>Allergen Intro</td>
+</tr>
+<tr>
+<td>ALLERGEN_INTRO_PEANUTS</td>
+<td>Allergen Intro (Peanuts)</td>
+<td>Allergen Intro</td>
+</tr>
+<tr>
+<td>ALLERGEN_INTRO_TREENUTS</td>
+<td>Allergen Intro (Treenuts)</td>
+<td>Allergen Intro</td>
+</tr>
+<tr>
+<td>ALLERGEN_INTRO_SOY</td>
+<td>Allergen Intro (Soy)</td>
+<td>Allergen Intro</td>
+</tr>
+<tr>
+<td>ALLERGEN_INTRO_WHEAT</td>
+<td>Allergen Intro (Wheat)</td>
+<td>Allergen Intro</td>
+</tr>
+<tr>
+<td>ALLERGEN_INTRO_FISH</td>
+<td>Allergen Intro (Fish)</td>
+<td>Allergen Intro</td>
+</tr>
+<tr>
+<td>ALLERGEN_INTRO_SHELLFISH</td>
+<td>Allergen Intro (Shellfish)</td>
+<td>Allergen Intro</td>
+</tr>
+<tr>
+<td>ALLERGEN_FREE_MILK</td>
+<td>Avoid allergen (Milk)</td>
+<td>Allergen Free</td>
+</tr>
+<tr>
+<td>ALLERGEN_FREE_EGG</td>
+<td>Avoid allergen (Egg)</td>
+<td>Allergen Free</td>
+</tr>
+<tr>
+<td>ALLERGEN_FREE_PEANUTS</td>
+<td>Avoid allergen (Peanuts)</td>
+<td>Allergen Free</td>
+</tr>
+<tr>
+<td>ALLERGEN_FREE_TREENUTS</td>
+<td>Avoid allergen (Treenuts)</td>
+<td>Allergen Free</td>
+</tr>
+<tr>
+<td>ALLERGEN_FREE_SOY</td>
+<td>Avoid allergen (Soy)</td>
+<td>Allergen Free</td>
+</tr>
+<tr>
+<td>ALLERGEN_FREE_WHEAT</td>
+<td>Avoid allergen (Wheat)</td>
+<td>Allergen Free</td>
+</tr>
+<tr>
+<td>ALLERGEN_FREE_FISH</td>
+<td>Avoid allergen (Fish)</td>
+<td>Allergen Free</td>
+</tr>
+<tr>
+<td>ALLERGEN_FREE_SHELLFISH</td>
+<td>Avoid allergen (Shellfish)</td>
+<td>Allergen Free</td>
+</tr>
+<tr>
+<td>CUISINE_INDIAN</td>
+<td>Indian</td>
+<td>Cuisine</td>
+</tr>
+<tr>
+<td>TEXTURE_SMOOTH</td>
+<td>Smooth puree</td>
+<td>Texture</td>
+</tr>
+<tr>
+<td>TEXTURE_THICKER</td>
+<td>Thicker Puree</td>
+<td>Texture</td>
+</tr>
+<tr>
+<td>TEXTURE_CHEWABLE</td>
+<td>Soft and chewable</td>
+<td>Texture</td>
+</tr>
+<tr>
+<td>TEXTURE_WHOLE</td>
+<td>Whole foods</td>
+<td>Texture</td>
+</tr>
+<tr>
+<td>STAGE_ONE</td>
+<td>Stage 1 (4-6m)</td>
+<td>Stage</td>
+</tr>
+<tr>
+<td>STAGE_TWO</td>
+<td>Stage 2 (6-9m)</td>
+<td>Stage</td>
+</tr>
+<tr>
+<td>STAGE_THREE</td>
+<td>Stage 3 (9-12m)</td>
+<td>Stage</td>
+</tr>
+<tr>
+<td>STAGE_BLW</td>
+<td>Finger foods (BLW)</td>
+<td>Stage</td>
+</tr>
+<tr>
+<td>STAGE_TODDLER</td>
+<td>Toddler foods</td>
+<td>Stage</td>
+</tr>
+<tr>
+<td>STAGE_FAMILY</td>
+<td>Family foods</td>
+<td>Stage</td>
+</tr>
+<tr>
+<td>SEASONAL</td>
+<td>Seasonal</td>
+<td>Category</td>
+</tr>
+<tr>
+<td>HEALTH_GUT</td>
+<td>Gut health</td>
+<td>Health</td>
+</tr>
+<tr>
+<td>HEALTH_IMMUNE</td>
+<td>Immune system</td>
+<td>Health</td>
+</tr>
+<tr>
+<td>HEALTH_CARDIO</td>
+<td>Cardiovascular health</td>
+<td>Health</td>
+</tr>
+<tr>
+<td>HEALTH_SKIN</td>
+<td>Skin health</td>
+<td>Health</td>
+</tr>
+<tr>
+<td>HEALTH_BRAIN</td>
+<td>Brain development</td>
+<td>Health</td>
+</tr>
+<tr>
+<td>HEALTH_VISION</td>
+<td>Vision</td>
+<td>Health</td>
+</tr>
+<tr>
+<td>HEALTH_BONE</td>
+<td>Bone health</td>
+<td>Health</td>
+</tr>
+<tr>
+<td>HEALTH_NERVE</td>
+<td>Cognitive system</td>
+<td>Health</td>
+</tr>
+<tr>
+<td>HEALTH_SUPPORTIVE</td>
+<td>Supporting other nutrition absorption</td>
+<td>Health</td>
+</tr>
+<tr>
+<td>HEALTH_ANTIOXIDANT</td>
+<td>Anti-inflammatory, anti-oxidant, and anti-aging</td>
+<td>Health</td>
+</tr>
+<tr>
+<td>HEALTH_CELL</td>
+<td>Cellular growth</td>
+<td>Health</td>
+</tr>
+<tr>
+<td>HEALTH_DIGESTION</td>
+<td>Digestion</td>
+<td>Health</td>
+</tr>
+<tr>
+<td>HEALTH_ENERGY</td>
+<td>Energy</td>
+<td>Health</td>
+</tr>
+<tr>
+<td>HEALTH_BLOOD</td>
+<td>Blood health</td>
+<td>Health</td>
+</tr>
+<tr>
+<td>HEALTH_METABOLISM</td>
+<td>Healthy metabolism</td>
+<td>Health</td>
+</tr>
+<tr>
+<td>GOALS_IRON</td>
+<td>Iron sufficient</td>
+<td>Nutrition Goal</td>
+</tr>
+<tr>
+<td>EQUIP_AIRFRYER</td>
+<td>Air fryer</td>
+<td>Equipment</td>
+</tr>
+<tr>
+<td>ALLERGEN_INTRO_SESAME</td>
+<td>Introduce sesame</td>
+<td>Allergen Intro</td>
+</tr>
+<tr>
+<td>ALLERGEN_FREE_SESAME</td>
+<td>Does not contain sesame</td>
+<td>Allergen Free</td>
+</tr>
+<tr>
+<td>OTHERS_COOKING_ACTIVITIES</td>
+<td>Cooking with kids</td>
+<td>Other</td>
+</tr>
+</tbody></table>
+<h2 id='diet-restriction'>Diet Restriction</h2>
+<table><thead>
+<tr>
+<th>Value</th>
+<th>Comment</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>VEGETARIAN</td>
+<td>Vegetarian</td>
+</tr>
+<tr>
+<td>VEGAN</td>
+<td>Vegan</td>
+</tr>
+<tr>
+<td>PESCATARIAN</td>
+<td>Pescatarian</td>
+</tr>
+<tr>
+<td>HALAL</td>
+<td>Halal</td>
+</tr>
+<tr>
+<td>KOSHER</td>
+<td>Kosher</td>
+</tr>
+<tr>
+<td>GLUTEN_FREE</td>
+<td>Gluten-free</td>
+</tr>
+<tr>
+<td>FOOD_ALLERGY</td>
+<td>Food Allergy</td>
+</tr>
+<tr>
+<td>LACTOSE_INTOLERANT</td>
+<td>Lactose-intolerant</td>
+</tr>
+</tbody></table>
+<h2 id='food-allergy'>Food Allergy</h2>
+<table><thead>
+<tr>
+<th>Value</th>
+<th>Comment</th>
+<th>Category</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>COMMON_MILK</td>
+<td>Milk</td>
+<td>Common Allergens</td>
+</tr>
+<tr>
+<td>COMMON_EGGS</td>
+<td>Eggs</td>
+<td>Common Allergens</td>
+</tr>
+<tr>
+<td>COMMON_PEANUTS</td>
+<td>Peanuts</td>
+<td>Common Allergens</td>
+</tr>
+<tr>
+<td>COMMON_TREE_NUTS</td>
+<td>Tree nuts</td>
+<td>Common Allergens</td>
+</tr>
+<tr>
+<td>COMMON_SOY</td>
+<td>Soy</td>
+<td>Common Allergens</td>
+</tr>
+<tr>
+<td>COMMON_WHEAT</td>
+<td>Wheat</td>
+<td>Common Allergens</td>
+</tr>
+<tr>
+<td>COMMON_FISH</td>
+<td>Fish</td>
+<td>Common Allergens</td>
+</tr>
+<tr>
+<td>COMMON_SHELLFISH</td>
+<td>Shellfish</td>
+<td>Common Allergens</td>
+</tr>
+<tr>
+<td>COMMON_SESAME</td>
+<td>Sesame</td>
+<td>Common Allergens</td>
+</tr>
+<tr>
+<td>DAIRY_CASEIN</td>
+<td>Casein</td>
+<td>Dairy</td>
+</tr>
+<tr>
+<td>DAIRY_WHEY</td>
+<td>Whey</td>
+<td>Dairy</td>
+</tr>
+<tr>
+<td>DAIRY_LACTOSE</td>
+<td>Lactose</td>
+<td>Dairy</td>
+</tr>
+<tr>
+<td>DAIRY_BUTTER</td>
+<td>Butter</td>
+<td>Dairy</td>
+</tr>
+<tr>
+<td>DAIRY_CHEESE</td>
+<td>Cheese</td>
+<td>Dairy</td>
+</tr>
+<tr>
+<td>DAIRY_CREAM</td>
+<td>Cream</td>
+<td>Dairy</td>
+</tr>
+<tr>
+<td>DAIRY_YOGURT</td>
+<td>Yogurt</td>
+<td>Dairy</td>
+</tr>
+<tr>
+<td>DAIRY_ICE_CREAM</td>
+<td>Ice cream</td>
+<td>Dairy</td>
+</tr>
+<tr>
+<td>DAIRY_GHEE</td>
+<td>Ghee</td>
+<td>Dairy</td>
+</tr>
+<tr>
+<td>DAIRY_MILK_POWDER</td>
+<td>Milk powder</td>
+<td>Dairy</td>
+</tr>
+<tr>
+<td>DAIRY_COTTAGE_CHEESE</td>
+<td>Cottage cheese</td>
+<td>Dairy</td>
+</tr>
+<tr>
+<td>DAIRY_SOUR_CREAM</td>
+<td>Sour cream</td>
+<td>Dairy</td>
+</tr>
+<tr>
+<td>DAIRY_BUTTERMILK</td>
+<td>Buttermilk</td>
+<td>Dairy</td>
+</tr>
+<tr>
+<td>DAIRY_KEFIR</td>
+<td>Kefir</td>
+<td>Dairy</td>
+</tr>
+<tr>
+<td>DAIRY_LACTALBUMIN</td>
+<td>Lactalbumin</td>
+<td>Dairy</td>
+</tr>
+<tr>
+<td>EGGS_CHICKEN</td>
+<td>Chicken eggs</td>
+<td>Eggs</td>
+</tr>
+<tr>
+<td>EGGS_DUCK</td>
+<td>Duck eggs</td>
+<td>Eggs</td>
+</tr>
+<tr>
+<td>EGGS_QUAIL</td>
+<td>Quail eggs</td>
+<td>Eggs</td>
+</tr>
+<tr>
+<td>EGGS_GOOSE</td>
+<td>Goose eggs</td>
+<td>Eggs</td>
+</tr>
+<tr>
+<td>EGGS_TURKEY</td>
+<td>Turkey eggs</td>
+<td>Eggs</td>
+</tr>
+<tr>
+<td>EGGS_WHITES</td>
+<td>Egg whites</td>
+<td>Eggs</td>
+</tr>
+<tr>
+<td>EGGS_YOLKS</td>
+<td>Egg yolks</td>
+<td>Eggs</td>
+</tr>
+<tr>
+<td>EGGS_POWDER</td>
+<td>Egg powder</td>
+<td>Eggs</td>
+</tr>
+<tr>
+<td>EGGS_LECITHIN</td>
+<td>Egg lecithin</td>
+<td>Eggs</td>
+</tr>
+<tr>
+<td>EGGS_PROTEINS</td>
+<td>Egg proteins</td>
+<td>Eggs</td>
+</tr>
+<tr>
+<td>EGGS_ALBUMIN</td>
+<td>Albumin</td>
+<td>Eggs</td>
+</tr>
+<tr>
+<td>EGGS_GLOBULIN</td>
+<td>Globulin</td>
+<td>Eggs</td>
+</tr>
+<tr>
+<td>EGGS_LIVETIN</td>
+<td>Livetin</td>
+<td>Eggs</td>
+</tr>
+<tr>
+<td>EGGS_OVOMUCOID</td>
+<td>Ovomucoid</td>
+<td>Eggs</td>
+</tr>
+<tr>
+<td>EGGS_OVALBUMIN</td>
+<td>Ovalbumin</td>
+<td>Eggs</td>
+</tr>
+<tr>
+<td>TREE_NUTS_ALMONDS</td>
+<td>Almonds</td>
+<td>Tree Nuts</td>
+</tr>
+<tr>
+<td>TREE_NUTS_BRAZIL</td>
+<td>Brazil nuts</td>
+<td>Tree Nuts</td>
+</tr>
+<tr>
+<td>TREE_NUTS_CASHEWS</td>
+<td>Cashews</td>
+<td>Tree Nuts</td>
+</tr>
+<tr>
+<td>TREE_NUTS_HAZELNUTS</td>
+<td>Hazelnuts</td>
+<td>Tree Nuts</td>
+</tr>
+<tr>
+<td>TREE_NUTS_MACADAMIA</td>
+<td>Macadamia nuts</td>
+<td>Tree Nuts</td>
+</tr>
+<tr>
+<td>TREE_NUTS_PECANS</td>
+<td>Pecans</td>
+<td>Tree Nuts</td>
+</tr>
+<tr>
+<td>TREE_NUTS_PINE</td>
+<td>Pine nuts</td>
+<td>Tree Nuts</td>
+</tr>
+<tr>
+<td>TREE_NUTS_PISTACHIOS</td>
+<td>Pistachios</td>
+<td>Tree Nuts</td>
+</tr>
+<tr>
+<td>TREE_NUTS_WALNUTS</td>
+<td>Walnuts</td>
+<td>Tree Nuts</td>
+</tr>
+<tr>
+<td>TREE_NUTS_SHEA</td>
+<td>Shea nuts</td>
+<td>Tree Nuts</td>
+</tr>
+<tr>
+<td>TREE_NUTS_COCONUT</td>
+<td>Coconut</td>
+<td>Tree Nuts</td>
+</tr>
+<tr>
+<td>TREE_NUTS_CHESTNUTS</td>
+<td>Chestnuts</td>
+<td>Tree Nuts</td>
+</tr>
+<tr>
+<td>TREE_NUTS_HICKORY</td>
+<td>Hickory nuts</td>
+<td>Tree Nuts</td>
+</tr>
+<tr>
+<td>TREE_NUTS_BEECH</td>
+<td>Beechnuts</td>
+<td>Tree Nuts</td>
+</tr>
+<tr>
+<td>TREE_NUTS_GINKGO</td>
+<td>Ginkgo nuts</td>
+<td>Tree Nuts</td>
+</tr>
+<tr>
+<td>TREE_NUTS_LYCHEE</td>
+<td>Lychee nuts</td>
+<td>Tree Nuts</td>
+</tr>
+<tr>
+<td>TREE_NUTS_PILI</td>
+<td>Pili nuts</td>
+<td>Tree Nuts</td>
+</tr>
+<tr>
+<td>TREE_NUTS_CANDLE</td>
+<td>Candle nuts</td>
+<td>Tree Nuts</td>
+</tr>
+<tr>
+<td>TREE_NUTS_KOLA</td>
+<td>Kola nuts</td>
+<td>Tree Nuts</td>
+</tr>
+<tr>
+<td>TREE_NUTS_PARADISE</td>
+<td>Paradise nuts</td>
+<td>Tree Nuts</td>
+</tr>
+<tr>
+<td>PEANUTS_WHOLE</td>
+<td>Peanuts</td>
+<td>Peanuts</td>
+</tr>
+<tr>
+<td>PEANUTS_OIL</td>
+<td>Peanut oil</td>
+<td>Peanuts</td>
+</tr>
+<tr>
+<td>PEANUTS_FLOUR</td>
+<td>Peanut flour</td>
+<td>Peanuts</td>
+</tr>
+<tr>
+<td>PEANUTS_BUTTER</td>
+<td>Peanut butter</td>
+<td>Peanuts</td>
+</tr>
+<tr>
+<td>PEANUTS_PROTEIN</td>
+<td>Peanut protein</td>
+<td>Peanuts</td>
+</tr>
+<tr>
+<td>PEANUTS_ARACHIS_OIL</td>
+<td>Arachis oil</td>
+<td>Peanuts</td>
+</tr>
+<tr>
+<td>PEANUTS_BEER_NUTS</td>
+<td>Beer nuts</td>
+<td>Peanuts</td>
+</tr>
+<tr>
+<td>PEANUTS_MIXED</td>
+<td>Mixed nuts</td>
+<td>Peanuts</td>
+</tr>
+<tr>
+<td>PEANUTS_NUT_MEAT</td>
+<td>Nut meat</td>
+<td>Peanuts</td>
+</tr>
+<tr>
+<td>PEANUTS_GROUND</td>
+<td>Ground nuts</td>
+<td>Peanuts</td>
+</tr>
+<tr>
+<td>PEANUTS_MONKEY</td>
+<td>Monkey nuts</td>
+<td>Peanuts</td>
+</tr>
+<tr>
+<td>PEANUTS_MANDELONAS</td>
+<td>Mandelonas</td>
+<td>Peanuts</td>
+</tr>
+<tr>
+<td>PEANUTS_NU_NUTS</td>
+<td>Nu-Nuts</td>
+<td>Peanuts</td>
+</tr>
+<tr>
+<td>PEANUTS_SPROUTS</td>
+<td>Peanut sprouts</td>
+<td>Peanuts</td>
+</tr>
+<tr>
+<td>SOY_SOYBEANS</td>
+<td>Soybeans</td>
+<td>Soy</td>
+</tr>
+<tr>
+<td>SOY_SAUCE</td>
+<td>Soy sauce</td>
+<td>Soy</td>
+</tr>
+<tr>
+<td>SOY_TOFU</td>
+<td>Tofu</td>
+<td>Soy</td>
+</tr>
+<tr>
+<td>SOY_TEMPEH</td>
+<td>Tempeh</td>
+<td>Soy</td>
+</tr>
+<tr>
+<td>SOY_MISO</td>
+<td>Miso</td>
+<td>Soy</td>
+</tr>
+<tr>
+<td>SOY_NATTO</td>
+<td>Natto</td>
+<td>Soy</td>
+</tr>
+<tr>
+<td>SOY_EDAMAME</td>
+<td>Edamame</td>
+<td>Soy</td>
+</tr>
+<tr>
+<td>SOY_LECITHIN</td>
+<td>Soy lecithin</td>
+<td>Soy</td>
+</tr>
+<tr>
+<td>SOY_PROTEIN</td>
+<td>Soy protein</td>
+<td>Soy</td>
+</tr>
+<tr>
+<td>SOY_FLOUR</td>
+<td>Soy flour</td>
+<td>Soy</td>
+</tr>
+<tr>
+<td>SOY_MILK</td>
+<td>Soy milk</td>
+<td>Soy</td>
+</tr>
+<tr>
+<td>SOY_NUTS</td>
+<td>Soy nuts</td>
+<td>Soy</td>
+</tr>
+<tr>
+<td>SOY_SPROUTS</td>
+<td>Soy sprouts</td>
+<td>Soy</td>
+</tr>
+<tr>
+<td>SOY_TVP</td>
+<td>Textured vegetable protein</td>
+<td>Soy</td>
+</tr>
+<tr>
+<td>SOY_HVP</td>
+<td>Hydrolyzed vegetable protein</td>
+<td>Soy</td>
+</tr>
+<tr>
+<td>WHEAT_FLOUR</td>
+<td>Wheat flour</td>
+<td>Wheat</td>
+</tr>
+<tr>
+<td>WHEAT_BRAN</td>
+<td>Wheat bran</td>
+<td>Wheat</td>
+</tr>
+<tr>
+<td>WHEAT_GERM</td>
+<td>Wheat germ</td>
+<td>Wheat</td>
+</tr>
+<tr>
+<td>WHEAT_STARCH</td>
+<td>Wheat starch</td>
+<td>Wheat</td>
+</tr>
+<tr>
+<td>WHEAT_PROTEIN</td>
+<td>Wheat protein</td>
+<td>Wheat</td>
+</tr>
+<tr>
+<td>WHEAT_SEMOLINA</td>
+<td>Semolina</td>
+<td>Wheat</td>
+</tr>
+<tr>
+<td>WHEAT_DURUM</td>
+<td>Durum</td>
+<td>Wheat</td>
+</tr>
+<tr>
+<td>WHEAT_KAMUT</td>
+<td>Kamut</td>
+<td>Wheat</td>
+</tr>
+<tr>
+<td>WHEAT_SPELT</td>
+<td>Spelt</td>
+<td>Wheat</td>
+</tr>
+<tr>
+<td>WHEAT_TRITICALE</td>
+<td>Triticale</td>
+<td>Wheat</td>
+</tr>
+<tr>
+<td>WHEAT_VITAL_GLUTEN</td>
+<td>Vital wheat gluten</td>
+<td>Wheat</td>
+</tr>
+<tr>
+<td>WHEAT_MODIFIED_STARCH</td>
+<td>Modified wheat starch</td>
+<td>Wheat</td>
+</tr>
+<tr>
+<td>WHEAT_GRASS</td>
+<td>Wheat grass</td>
+<td>Wheat</td>
+</tr>
+<tr>
+<td>WHEAT_CRACKED</td>
+<td>Cracked wheat</td>
+<td>Wheat</td>
+</tr>
+<tr>
+<td>WHEAT_BULGUR</td>
+<td>Bulgur</td>
+<td>Wheat</td>
+</tr>
+<tr>
+<td>FISH_SALMON</td>
+<td>Salmon</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_TUNA</td>
+<td>Tuna</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_COD</td>
+<td>Cod</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_HALIBUT</td>
+<td>Halibut</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_MACKEREL</td>
+<td>Mackerel</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_TROUT</td>
+<td>Trout</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_BASS</td>
+<td>Bass</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_FLOUNDER</td>
+<td>Flounder</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_SOLE</td>
+<td>Sole</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_HADDOCK</td>
+<td>Haddock</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_ANCHOVY</td>
+<td>Anchovy</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_SARDINES</td>
+<td>Sardines</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_TILAPIA</td>
+<td>Tilapia</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_MAHI_MAHI</td>
+<td>Mahi mahi</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_SWORDFISH</td>
+<td>Swordfish</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_PIKE</td>
+<td>Pike</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_PERCH</td>
+<td>Perch</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_SNAPPER</td>
+<td>Snapper</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_GROUPER</td>
+<td>Grouper</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_CATFISH</td>
+<td>Catfish</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_GELATIN</td>
+<td>Fish gelatin</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_OIL</td>
+<td>Fish oil</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_SAUCE</td>
+<td>Fish sauce</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_STOCK</td>
+<td>Fish stock</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_CAVIAR</td>
+<td>Caviar</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>FISH_ROE</td>
+<td>Roe</td>
+<td>Fish</td>
+</tr>
+<tr>
+<td>SHELLFISH_SHRIMP</td>
+<td>Shrimp</td>
+<td>Shellfish</td>
+</tr>
+<tr>
+<td>SHELLFISH_CRAB</td>
+<td>Crab</td>
+<td>Shellfish</td>
+</tr>
+<tr>
+<td>SHELLFISH_LOBSTER</td>
+<td>Lobster</td>
+<td>Shellfish</td>
+</tr>
+<tr>
+<td>SHELLFISH_CRAYFISH</td>
+<td>Crayfish</td>
+<td>Shellfish</td>
+</tr>
+<tr>
+<td>SHELLFISH_PRAWNS</td>
+<td>Prawns</td>
+<td>Shellfish</td>
+</tr>
+<tr>
+<td>SHELLFISH_CLAMS</td>
+<td>Clams</td>
+<td>Shellfish</td>
+</tr>
+<tr>
+<td>SHELLFISH_MUSSELS</td>
+<td>Mussels</td>
+<td>Shellfish</td>
+</tr>
+<tr>
+<td>SHELLFISH_OYSTERS</td>
+<td>Oysters</td>
+<td>Shellfish</td>
+</tr>
+<tr>
+<td>SHELLFISH_SCALLOPS</td>
+<td>Scallops</td>
+<td>Shellfish</td>
+</tr>
+<tr>
+<td>SHELLFISH_SQUID</td>
+<td>Squid</td>
+<td>Shellfish</td>
+</tr>
+<tr>
+<td>SHELLFISH_OCTOPUS</td>
+<td>Octopus</td>
+<td>Shellfish</td>
+</tr>
+<tr>
+<td>SHELLFISH_ABALONE</td>
+<td>Abalone</td>
+<td>Shellfish</td>
+</tr>
+<tr>
+<td>SHELLFISH_COCKLES</td>
+<td>Cockles</td>
+<td>Shellfish</td>
+</tr>
+<tr>
+<td>SHELLFISH_PERIWINKLES</td>
+<td>Periwinkles</td>
+<td>Shellfish</td>
+</tr>
+<tr>
+<td>SHELLFISH_SEA_URCHIN</td>
+<td>Sea urchin</td>
+<td>Shellfish</td>
+</tr>
+<tr>
+<td>SHELLFISH_BARNACLES</td>
+<td>Barnacles</td>
+<td>Shellfish</td>
+</tr>
+<tr>
+<td>SHELLFISH_CRAWFISH</td>
+<td>Crawfish</td>
+<td>Shellfish</td>
+</tr>
+<tr>
+<td>SHELLFISH_LANGOUSTINES</td>
+<td>Langoustines</td>
+<td>Shellfish</td>
+</tr>
+<tr>
+<td>SHELLFISH_WHELKS</td>
+<td>Whelks</td>
+<td>Shellfish</td>
+</tr>
+<tr>
+<td>SESAME_SEEDS</td>
+<td>Sesame seeds</td>
+<td>Sesame</td>
+</tr>
+<tr>
+<td>SESAME_OIL</td>
+<td>Sesame oil</td>
+<td>Sesame</td>
+</tr>
+<tr>
+<td>SESAME_TAHINI</td>
+<td>Tahini</td>
+<td>Sesame</td>
+</tr>
+<tr>
+<td>SESAME_SESAMOL</td>
+<td>Sesamol</td>
+<td>Sesame</td>
+</tr>
+<tr>
+<td>SESAME_FLOUR</td>
+<td>Sesame flour</td>
+<td>Sesame</td>
+</tr>
+<tr>
+<td>SESAME_PASTE</td>
+<td>Sesame paste</td>
+<td>Sesame</td>
+</tr>
+<tr>
+<td>SESAME_GINGELLY_OIL</td>
+<td>Gingelly oil</td>
+<td>Sesame</td>
+</tr>
+<tr>
+<td>SESAME_BENNE</td>
+<td>Benne seeds</td>
+<td>Sesame</td>
+</tr>
+<tr>
+<td>SESAME_SALT</td>
+<td>Sesame salt</td>
+<td>Sesame</td>
+</tr>
+<tr>
+<td>SESAME_AQUA_LIBRA</td>
+<td>Aqua libra</td>
+<td>Sesame</td>
+</tr>
+<tr>
+<td>SESAME_SPROUTS</td>
+<td>Sesame sprouts</td>
+<td>Sesame</td>
+</tr>
+<tr>
+<td>FRUITS_APPLES</td>
+<td>Apples</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_PEARS</td>
+<td>Pears</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_CHERRIES</td>
+<td>Cherries</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_PEACHES</td>
+<td>Peaches</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_PLUMS</td>
+<td>Plums</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_APRICOTS</td>
+<td>Apricots</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_NECTARINES</td>
+<td>Nectarines</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_STRAWBERRIES</td>
+<td>Strawberries</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_RASPBERRIES</td>
+<td>Raspberries</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_BLACKBERRIES</td>
+<td>Blackberries</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_BLUEBERRIES</td>
+<td>Blueberries</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_GRAPES</td>
+<td>Grapes</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_BANANAS</td>
+<td>Bananas</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_KIWI</td>
+<td>Kiwi</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_MANGO</td>
+<td>Mango</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_PINEAPPLE</td>
+<td>Pineapple</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_PAPAYA</td>
+<td>Papaya</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_FIGS</td>
+<td>Figs</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_DATES</td>
+<td>Dates</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_POMEGRANATE</td>
+<td>Pomegranate</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_LYCHEE</td>
+<td>Lychee</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_DRAGON_FRUIT</td>
+<td>Dragon fruit</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_PASSION_FRUIT</td>
+<td>Passion fruit</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_GUAVA</td>
+<td>Guava</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_PERSIMMON</td>
+<td>Persimmon</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_AVOCADO</td>
+<td>Avocado</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_ORANGES</td>
+<td>Oranges</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_LEMONS</td>
+<td>Lemons</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_LIMES</td>
+<td>Limes</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_GRAPEFRUIT</td>
+<td>Grapefruit</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_TANGERINES</td>
+<td>Tangerines</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_CLEMENTINES</td>
+<td>Clementines</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>FRUITS_KUMQUATS</td>
+<td>Kumquats</td>
+<td>Fruits</td>
+</tr>
+<tr>
+<td>VEGETABLES_CELERY</td>
+<td>Celery</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_CARROTS</td>
+<td>Carrots</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_PARSNIPS</td>
+<td>Parsnips</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_TURNIPS</td>
+<td>Turnips</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_RUTABAGA</td>
+<td>Rutabaga</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_BEETS</td>
+<td>Beets</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_RADISHES</td>
+<td>Radishes</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_POTATOES</td>
+<td>Potatoes</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_SWEET_POTATOES</td>
+<td>Sweet potatoes</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_YAMS</td>
+<td>Yams</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_ONIONS</td>
+<td>Onions</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_GARLIC</td>
+<td>Garlic</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_LEEKS</td>
+<td>Leeks</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_SHALLOTS</td>
+<td>Shallots</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_CHIVES</td>
+<td>Chives</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_ASPARAGUS</td>
+<td>Asparagus</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_BROCCOLI</td>
+<td>Broccoli</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_CAULIFLOWER</td>
+<td>Cauliflower</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_BRUSSELS_SPROUTS</td>
+<td>Brussels sprouts</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_CABBAGE</td>
+<td>Cabbage</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_KALE</td>
+<td>Kale</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_COLLARD_GREENS</td>
+<td>Collard greens</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_SPINACH</td>
+<td>Spinach</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_SWISS_CHARD</td>
+<td>Swiss chard</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_LETTUCE</td>
+<td>Lettuce</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_ARUGULA</td>
+<td>Arugula</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_WATERCRESS</td>
+<td>Watercress</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_MUSHROOMS</td>
+<td>Mushrooms</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_TOMATOES</td>
+<td>Tomatoes</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_PEPPERS</td>
+<td>Peppers</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_EGGPLANT</td>
+<td>Eggplant</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLES_ZUCCHINI</td>
+<td>Zucchini</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLE_CUCUMBER</td>
+<td>Cucumber</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLE_PUMPKIN</td>
+<td>Pumpkin</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLE_SQUASH</td>
+<td>Squash</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLE_ARTICHOKES</td>
+<td>Artichokes</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLE_BAMBOO_SHOOTS</td>
+<td>Bamboo shoots</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLE_BEAN_SPROUTS</td>
+<td>Bean sprouts</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLE_CORN</td>
+<td>Corn</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLE_GREEN_BEANS</td>
+<td>Green beans</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLE_PEAS</td>
+<td>Peas</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLE_JICAMA</td>
+<td>Jicama</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLE_KOHLRABI</td>
+<td>Kohlrabi</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>VEGETABLE_OKRA</td>
+<td>Okra</td>
+<td>Vegetables</td>
+</tr>
+<tr>
+<td>LEGUME_BLACK_BEANS</td>
+<td>Black beans</td>
+<td>Legumes</td>
+</tr>
+<tr>
+<td>LEGUME_KIDNEY_BEANS</td>
+<td>Kidney beans</td>
+<td>Legumes</td>
+</tr>
+<tr>
+<td>LEGUME_NAVY_BEANS</td>
+<td>Navy beans</td>
+<td>Legumes</td>
+</tr>
+<tr>
+<td>LEGUME_PINTO_BEANS</td>
+<td>Pinto beans</td>
+<td>Legumes</td>
+</tr>
+<tr>
+<td>LEGUME_WHITE_BEANS</td>
+<td>White beans</td>
+<td>Legumes</td>
+</tr>
+<tr>
+<td>LEGUME_LIMA_BEANS</td>
+<td>Lima beans</td>
+<td>Legumes</td>
+</tr>
+<tr>
+<td>LEGUME_FAVA_BEANS</td>
+<td>Fava beans</td>
+<td>Legumes</td>
+</tr>
+<tr>
+<td>LEGUME_CHICKPEAS</td>
+<td>Chickpeas</td>
+<td>Legumes</td>
+</tr>
+<tr>
+<td>LEGUME_LENTILS</td>
+<td>Lentils</td>
+<td>Legumes</td>
+</tr>
+<tr>
+<td>LEGUME_SPLIT_PEAS</td>
+<td>Split peas</td>
+<td>Legumes</td>
+</tr>
+<tr>
+<td>LEGUME_MUNG_BEANS</td>
+<td>Mung beans</td>
+<td>Legumes</td>
+</tr>
+<tr>
+<td>LEGUME_ADZUKI_BEANS</td>
+<td>Adzuki beans</td>
+<td>Legumes</td>
+</tr>
+<tr>
+<td>LEGUME_BLACK_EYED_PEAS</td>
+<td>Black-eyed peas</td>
+<td>Legumes</td>
+</tr>
+<tr>
+<td>LEGUME_CANNELLINI_BEANS</td>
+<td>Cannellini beans</td>
+<td>Legumes</td>
+</tr>
+<tr>
+<td>LEGUME_GREAT_NORTHERN_BEANS</td>
+<td>Great Northern beans</td>
+<td>Legumes</td>
+</tr>
+<tr>
+<td>LEGUME_LUPINI_BEANS</td>
+<td>Lupini beans</td>
+<td>Legumes</td>
+</tr>
+<tr>
+<td>LEGUME_SOYBEANS</td>
+<td>Soybeans</td>
+<td>Legumes</td>
+</tr>
+<tr>
+<td>LEGUME_GREEN_PEAS</td>
+<td>Green peas</td>
+<td>Legumes</td>
+</tr>
+<tr>
+<td>LEGUME_SNOW_PEAS</td>
+<td>Snow peas</td>
+<td>Legumes</td>
+</tr>
+<tr>
+<td>LEGUME_SUGAR_SNAP_PEAS</td>
+<td>Sugar snap peas</td>
+<td>Legumes</td>
+</tr>
+<tr>
+<td>GRAIN_BARLEY</td>
+<td>Barley</td>
+<td>Grains</td>
+</tr>
+<tr>
+<td>GRAIN_BUCKWHEAT</td>
+<td>Buckwheat</td>
+<td>Grains</td>
+</tr>
+<tr>
+<td>GRAIN_CORN</td>
+<td>Corn</td>
+<td>Grains</td>
+</tr>
+<tr>
+<td>GRAIN_MILLET</td>
+<td>Millet</td>
+<td>Grains</td>
+</tr>
+<tr>
+<td>GRAIN_OATS</td>
+<td>Oats</td>
+<td>Grains</td>
+</tr>
+<tr>
+<td>GRAIN_QUINOA</td>
+<td>Quinoa</td>
+<td>Grains</td>
+</tr>
+<tr>
+<td>GRAIN_RICE</td>
+<td>Rice</td>
+<td>Grains</td>
+</tr>
+<tr>
+<td>GRAIN_RYE</td>
+<td>Rye</td>
+<td>Grains</td>
+</tr>
+<tr>
+<td>GRAIN_SORGHUM</td>
+<td>Sorghum</td>
+<td>Grains</td>
+</tr>
+<tr>
+<td>GRAIN_TEFF</td>
+<td>Teff</td>
+<td>Grains</td>
+</tr>
+<tr>
+<td>GRAIN_WILD_RICE</td>
+<td>Wild rice</td>
+<td>Grains</td>
+</tr>
+<tr>
+<td>GRAIN_AMARANTH</td>
+<td>Amaranth</td>
+<td>Grains</td>
+</tr>
+<tr>
+<td>GRAIN_FARRO</td>
+<td>Farro</td>
+<td>Grains</td>
+</tr>
+<tr>
+<td>GRAIN_FREEKEH</td>
+<td>Freekeh</td>
+<td>Grains</td>
+</tr>
+<tr>
+<td>GRAIN_JOBS_TEARS</td>
+<td>Job&#39;s tears</td>
+<td>Grains</td>
+</tr>
+<tr>
+<td>GRAIN_KANIWA</td>
+<td>Kaniwa</td>
+<td>Grains</td>
+</tr>
+<tr>
+<td>GRAIN_EINKORN</td>
+<td>Einkorn</td>
+<td>Grains</td>
+</tr>
+<tr>
+<td>GRAIN_EMMER</td>
+<td>Emmer</td>
+<td>Grains</td>
+</tr>
+<tr>
+<td>SEED_SUNFLOWER</td>
+<td>Sunflower seeds</td>
+<td>Seeds</td>
+</tr>
+<tr>
+<td>SEED_PUMPKIN</td>
+<td>Pumpkin seeds</td>
+<td>Seeds</td>
+</tr>
+<tr>
+<td>SEED_FLAX</td>
+<td>Flax seeds</td>
+<td>Seeds</td>
+</tr>
+<tr>
+<td>SEED_CHIA</td>
+<td>Chia seeds</td>
+<td>Seeds</td>
+</tr>
+<tr>
+<td>SEED_HEMP</td>
+<td>Hemp seeds</td>
+<td>Seeds</td>
+</tr>
+<tr>
+<td>SEED_POPPY</td>
+<td>Poppy seeds</td>
+<td>Seeds</td>
+</tr>
+<tr>
+<td>SEED_CARAWAY</td>
+<td>Caraway seeds</td>
+<td>Seeds</td>
+</tr>
+<tr>
+<td>SEED_FENNEL</td>
+<td>Fennel seeds</td>
+<td>Seeds</td>
+</tr>
+<tr>
+<td>SEED_MUSTARD</td>
+<td>Mustard seeds</td>
+<td>Seeds</td>
+</tr>
+<tr>
+<td>SEED_CUMIN</td>
+<td>Cumin seeds</td>
+<td>Seeds</td>
+</tr>
+<tr>
+<td>SEED_CORIANDER</td>
+<td>Coriander seeds</td>
+<td>Seeds</td>
+</tr>
+<tr>
+<td>SEED_CELERY</td>
+<td>Celery seeds</td>
+<td>Seeds</td>
+</tr>
+<tr>
+<td>SEED_ANISE</td>
+<td>Anise seeds</td>
+<td>Seeds</td>
+</tr>
+<tr>
+<td>SEED_NIGELLA</td>
+<td>Nigella seeds</td>
+<td>Seeds</td>
+</tr>
+<tr>
+<td>SEED_FENUGREEK</td>
+<td>Fenugreek seeds</td>
+<td>Seeds</td>
+</tr>
+<tr>
+<td>SPICE_BLACK_PEPPER</td>
+<td>Black pepper</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_WHITE_PEPPER</td>
+<td>White pepper</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_RED_PEPPER</td>
+<td>Red pepper</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_CHILI_POWDER</td>
+<td>Chili powder</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_PAPRIKA</td>
+<td>Paprika</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_CINNAMON</td>
+<td>Cinnamon</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_CLOVES</td>
+<td>Cloves</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_NUTMEG</td>
+<td>Nutmeg</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_MACE</td>
+<td>Mace</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_GINGER</td>
+<td>Ginger</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_TURMERIC</td>
+<td>Turmeric</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_CARDAMOM</td>
+<td>Cardamom</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_CORIANDER</td>
+<td>Coriander</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_CUMIN</td>
+<td>Cumin</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_FENNEL</td>
+<td>Fennel</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_FENUGREEK</td>
+<td>Fenugreek</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_GARLIC_POWDER</td>
+<td>Garlic powder</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_ONION_POWDER</td>
+<td>Onion powder</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_MUSTARD_POWDER</td>
+<td>Mustard powder</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_SAFFRON</td>
+<td>Saffron</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>HERB_BASIL</td>
+<td>Basil</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>HERB_OREGANO</td>
+<td>Oregano</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>HERB_THYME</td>
+<td>Thyme</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>HERB_ROSEMARY</td>
+<td>Rosemary</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>HERB_SAGE</td>
+<td>Sage</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>HERB_MARJORAM</td>
+<td>Marjoram</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>HERB_TARRAGON</td>
+<td>Tarragon</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>HERB_DILL</td>
+<td>Dill</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>HERB_MINT</td>
+<td>Mint</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>HERB_PARSLEY</td>
+<td>Parsley</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>HERB_CILANTRO</td>
+<td>Cilantro</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>HERB_BAY_LEAVES</td>
+<td>Bay leaves</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_CARAWAY</td>
+<td>Caraway</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_JUNIPER_BERRIES</td>
+<td>Juniper berries</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_WASABI</td>
+<td>Wasabi</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>SPICE_HORSERADISH</td>
+<td>Horseradish</td>
+<td>Spices and Herbs</td>
+</tr>
+<tr>
+<td>ADDITIVE_MSG</td>
+<td>MSG</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_SULFITES</td>
+<td>Sulfites</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_NITRATES</td>
+<td>Nitrates</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_NITRITES</td>
+<td>Nitrites</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_BHA</td>
+<td>BHA</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_BHT</td>
+<td>BHT</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_CARRAGEENAN</td>
+<td>Carrageenan</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_ANNATTO</td>
+<td>Annatto</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_TARTRAZINE</td>
+<td>Tartrazine</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_RED_DYE_40</td>
+<td>Red dye 40</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_YELLOW_DYE_5</td>
+<td>Yellow dye 5</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_YELLOW_DYE_6</td>
+<td>Yellow dye 6</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_BLUE_DYE_1</td>
+<td>Blue dye 1</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_ASPARTAME</td>
+<td>Aspartame</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_SUCRALOSE</td>
+<td>Sucralose</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_SACCHARIN</td>
+<td>Saccharin</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_STEVIA</td>
+<td>Stevia</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_ACESULFAME_K</td>
+<td>Acesulfame potassium</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_GUAR_GUM</td>
+<td>Guar gum</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_XANTHAN_GUM</td>
+<td>Xanthan gum</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_CARBOXYMETHYL_CELLULOSE</td>
+<td>Carboxymethyl cellulose</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_MALTODEXTRIN</td>
+<td>Maltodextrin</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVE_MODIFIED_FOOD_STARCH</td>
+<td>Modified food starch</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVES_SODIUM_BENZOATE</td>
+<td>Sodium benzoate</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVES_POTASSIUM_SORBATE</td>
+<td>Potassium sorbate</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVES_PROPYLENE_GLYCOL</td>
+<td>Propylene glycol</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVES_POLYSORBATES</td>
+<td>Polysorbates</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVES_SODIUM_NITRATE</td>
+<td>Sodium nitrate</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVES_CALCIUM_PROPIONATE</td>
+<td>Calcium propionate</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>ADDITIVES_PHOSPHORIC_ACID</td>
+<td>Phosphoric acid</td>
+<td>Additives</td>
+</tr>
+<tr>
+<td>OTHERS_YEAST</td>
+<td>Yeast</td>
+<td>Others</td>
+</tr>
+<tr>
+<td>OTHERS_GELATIN</td>
+<td>Gelatin</td>
+<td>Others</td>
+</tr>
+<tr>
+<td>OTHERS_CARMINE</td>
+<td>Carmine</td>
+<td>Others</td>
+</tr>
+<tr>
+<td>OTHERS_COCHINEAL_EXTRACT</td>
+<td>Cochineal extract</td>
+<td>Others</td>
+</tr>
+<tr>
+<td>OTHERS_ROYAL_JELLY</td>
+<td>Royal jelly</td>
+<td>Others</td>
+</tr>
+<tr>
+<td>OTHERS_PROPOLIS</td>
+<td>Propolis</td>
+<td>Others</td>
+</tr>
+<tr>
+<td>OTHERS_BEE_POLLEN</td>
+<td>Bee pollen</td>
+<td>Others</td>
+</tr>
+<tr>
+<td>OTHERS_HONEY</td>
+<td>Honey</td>
+<td>Others</td>
+</tr>
+<tr>
+<td>OTHERS_LATEX_FRUITS</td>
+<td>Latex fruits</td>
+<td>Others</td>
+</tr>
+<tr>
+<td>OTHERS_ALPHA_GAL</td>
+<td>Alpha-gal (meat allergy)</td>
+<td>Others</td>
+</tr>
+<tr>
+<td>OTHERS_FOOD_ENZYMES</td>
+<td>Food enzymes</td>
+<td>Others</td>
+</tr>
+<tr>
+<td>OTHERS_LUPIN</td>
+<td>Lupin</td>
+<td>Others</td>
+</tr>
+<tr>
+<td>OTHERS_MOLLUSKS</td>
+<td>Mollusks</td>
+<td>Others</td>
+</tr>
+<tr>
+<td>OTHERS_BUCKWHEAT</td>
+<td>Buckwheat</td>
+<td>Others</td>
+</tr>
+<tr>
+<td>OTHERS_MARSHMALLOW_ROOT</td>
+<td>Marshmallow root</td>
+<td>Others</td>
+</tr>
+<tr>
+<td>OTHERS_CHICORY_ROOT</td>
+<td>Chicory root</td>
+<td>Others</td>
+</tr>
+<tr>
+<td>OTHERS_TRAGACANTH</td>
+<td>Tragacanth</td>
+<td>Others</td>
+</tr>
+<tr>
+<td>OTHERS_ACACIA_GUM</td>
+<td>Acacia gum</td>
+<td>Others</td>
+</tr>
+<tr>
+<td>OTHERS_CAROB</td>
+<td>Carob</td>
+<td>Others</td>
+</tr>
+<tr>
+<td>OTHERS_MESQUITE</td>
+<td>Mesquite</td>
+<td>Others</td>
+</tr>
+</tbody></table>
+<h1 id='wip-below'>----------- WIP below</h1><h1 id='b2b'>----- B2B</h1><h1 id='errors'>Errors</h1>
 <aside class="notice">
 This error section is stored in a separate file in <code>includes/_errors.md</code>. Slate allows you to optionally separate out your docs into many files...just save them to the <code>includes</code> folder and add them to the top of your <code>index.md</code>'s frontmatter. Files are included in the order listed.
 </aside>

@@ -92,10 +92,10 @@ export async function callHasuraQuery(
 
 Hasura is used for a simple data fetch and data update. It has only one endpoint with different graphQL commands. How to call the endpoint is written on the right, and graphQL commands can be found in this document.
 
-Note that environment variables are not explicitly written. 
+Note that environment variables are not explicitly written in this documentation. 
 
 <aside class="notice">
-API calls require either admin secret or user token uses API keys to allow access to the API. Please let Kay know if you need those variables and don’t have them.
+API calls require either admin secret or user token uses API keys to allow access to the API. Please let Kay know if you need admin secret.
 </aside>
 
 
@@ -109,6 +109,7 @@ The userIDToken is automatically generated in jwt format when authenticated thro
 
 ## Create an Apollo Client
 
+The example code here is in jsx format. Please click jsx tab on the top right tab menu.
 > Create apollo.js file:
 
 ``` jsx
@@ -146,19 +147,21 @@ export const createApolloClient = (authToken) => {
 
 
 ## useQuery
+useQuery is a hook. Please select jsx to see the example codes on the right.
 
-```javascript
+```jsx
 import {GQL_COMMENT} from '@env';
 
-const [gqlFunction, {data, error}] = useQuery(GQL_COMMAND);
+const {data, error} = useQuery(GQL_COMMAND);
 
-gqlFunction({
-  variables: inputParams
-})
+if (data){
+  processDataHere();
+}
 ```
 
 
 ## useMutation
+useMutation is a hook. Please select jsx to see the example codes on the right.
 
 ```javascript
 import {GQL_COMMENT} from '@env';
@@ -168,20 +171,22 @@ const [gqlFunction, {data, error}] = useMutation(GQL_COMMAND);
 gqlFunction({
   variables: inputParams
 })
+
+if (data){
+  processDataHereIfNeeded();
+}
 ```
 
 
+
+# ----- B2C
 
 # App Loading
 
 We load as much as user-specific information up-front when app is being loaded once authenticated. The data fetch is completely based on the user email address that passed the authentication.
 
 
-## FULL DATA FETCH (mobile app)
-
-Mobile app is fetching all the info that is relevant. See web version below for web MVP.
-
-This query is limited to the specific user by automatically matching <code>user_account.uid</code> to idToken in authenticated jwt token.
+## B2C full data fetch (mobile app)
 
 ```graphql
 query fetchSetupData($email: String!, $start_at: timestamp!) {
@@ -359,6 +364,21 @@ query fetchSetupData($email: String!, $start_at: timestamp!) {
 
 ```
 
+> Example input parameter:
+
+```graphql
+{
+  email: "email@email.com",
+  start_at: "2024-11-01"
+}
+```
+
+
+Mobile app is fetching all the info that is relevant. See web version below for web MVP.
+
+This query is limited to the specific user by automatically matching <code>user_account.uid</code> to idToken in authenticated jwt token.
+
+### Parameters:
 
 Parameter | Type | Description
 --------- | ----------- | -----------
@@ -366,20 +386,18 @@ email     | text | ID from baby_profile table
 start_at  | timestamp | data load look back date. E.g. if entered '2024-11-01', it fetches meal plan from '2024-11-01'.
 
 
-> Example input parameter:
 
-```graphql
+### Example input parameters:
+
+<code>
 {
-  "email": "email@email.com",
-  "start_at": "2024-11-01"
+  email: "email@email.com",
+  start_at: "2024-11-01"
 }
-```
+</code>
 
 
-## MVP DATA FETCH (web)
-
-This query is limited to the specific user by automatically matching <code>user_account.uid</code> to idToken in authenticated jwt token.
-
+## B2C mvp data fetch (web)
 
 ```graphql
 query fetchSetupData($email: String!, $start_at: timestamp!) {
@@ -473,11 +491,24 @@ query fetchSetupData($email: String!, $start_at: timestamp!) {
 }
 ```
 
+This query is limited to the specific user by automatically matching <code>user_account.uid</code> to idToken in authenticated jwt token.
+
+### Parameters
 
 Parameter | Type | Description
 --------- | ----------- | -----------
 email     | text | user's email
 start_at  | timestamp | data load look back date. E.g. if entered '2024-11-01', it fetches meal plan from '2024-11-01'.
+
+
+### Example input parameters:
+
+<code>
+{
+  email: "email@email.com",
+  start_at: "2024-11-01"
+}
+</code>
 
 
 <aside class="notice">
@@ -489,8 +520,8 @@ Note that it is pulling recipes that includes this user's recipes and saved reci
 
 ```graphql
 {
-  "email": "email@email.com",
-  "start_at": "2024-11-01"
+  email: "email@email.com",
+  start_at: "2024-11-01"
 }
 ```
 
@@ -499,8 +530,6 @@ Note that it is pulling recipes that includes this user's recipes and saved reci
 
 
 ## Insert Account
-
-AWS Cognito authenticates users, but we keep track of their data separately. Thus, when user creates an account through Cognito, we need to make sure that it gets inserted into our <code>user_account</code> data table. And because the user doesn't have a record in our database yet, we allow the row to be inserted without restriction.
 
 ```graphql
 mutation InsertUserAccount($email: String!, $uid: String!, $nickname: String!, $thumbnailLink: String!) {
@@ -518,6 +547,19 @@ mutation InsertUserAccount($email: String!, $uid: String!, $nickname: String!, $
 }
 ```
 
+> Example input parameters:
+
+```graphql
+{
+  email: "email@email.com",
+  uid: "a1c5a247-b70d-4c0c-9f84-9f6bd5243391"
+}
+```
+
+AWS Cognito authenticates users, but we keep track of their data separately. Thus, when user creates an account through Cognito, we need to make sure that it gets inserted into our <code>user_account</code> data table. And because the user doesn't have a record in our database yet, we allow the row to be inserted without restriction.
+
+### Parameters
+
 Parameter | Type        | Description
 --------- | ----------- | -----------
 email     | text        | the user's email
@@ -525,9 +567,19 @@ uid       | uuid        | uid provided by Cognito
 nickname  | text        | the user's nickname. It's the first part from email address by default in mobile app logic
 thumbnailLink | text    | S3 key pointing to this user's thumbnail.
 
+### Example input parameters
+<code>
+{
+  email: "email@email.com",
+  uid: "a1c5a247-b70d-4c0c-9f84-9f6bd5243391"
+}
+</code>
+
+<aside class="notice">
+From the front end, nickname is automatically extracted from the user's email address. And if there is a duplicate nickname, we automatically append 4-digit uuid. For example, the front end tries to save "email" as nickname from "email@email.com", and if that fails because there is a duplicate, it tries again with nickname "email-a12b".
+</aside>
 
 ## Reactivate Account
-This is called when the uid from Cognito doesn't match with the uid from our database. This is necessary because otherwise, user token is not authorized.
 
 ```graphql
 mutation ReactivateAccount($email: String!, $uid: String!) {
@@ -542,6 +594,9 @@ mutation ReactivateAccount($email: String!, $uid: String!) {
 }
 
 ```
+
+This is called when the uid from Cognito doesn't match with the uid from our database. This is necessary because otherwise, user token is not authorized.
+
 
 
 ## Deactivate Account
@@ -645,8 +700,6 @@ mutation DeleteAccount($user_account_id: uuid!) {
 
 ## Create User Profile
 
-This part is usually created during onboarding process.
-
 ```graphql
 mutation CreateProfile(
   $baby_name: String
@@ -733,6 +786,9 @@ mutation CreateProfile(
 }
 ```
 
+This part is usually created during onboarding process.
+
+### Parameters
 
 Parameter     | Type        | Description
 ------------- | ----------- | -----------
@@ -757,7 +813,42 @@ tags          | list        | list of {user_account_id: user_account_id, tag: TA
 diet          | list        | list of {user_account_id: user_account_id, diet_type: DIET_TYPE_CODE}. See Diet Type list below.
 allergy       | list        | list of {user_account_id: user_account_id, food_allergy_type: ALLERGY_TYPE_CODE}. See food allergy code list below.
 
+### Example input parameters
 
+Also available on the right panel.
+
+<code>
+{
+  user_account_id: "ea39b907-6953-4354-abe4-99c441e5b1b3",
+  baby_name: "Noah",
+  bday: "2022-12-02",
+  days: 250,
+  sex: "MALE",
+  weight_value: 3.6,
+  weight_perc: 70,
+  height_value: 80,
+  height_perc: 60,
+  bmi_value: 2.5,
+  bmi_perc: 70,
+  cooking_level: "EASY",
+  goal: "Get inspiration",
+  for_who: "FAMILY",
+  adventure: "Y",
+  repeatMenu: "Y",
+  source: "SOCIAL_MEDIA",
+  tags: [
+    {user_account_id: "ea39b907-6953-4354-abe4-99c441e5b1b3", tag_id: "STAGE_FAMILY"},
+    {user_account_id: "ea39b907-6953-4354-abe4-99c441e5b1b3", tag_id: "EQUIP_BLENDER"},
+    {user_account_id: "ea39b907-6953-4354-abe4-99c441e5b1b3", tag_id: "GOALS_VEGGIES"}
+  ],
+  diet: [
+    {user_account_id: "ea39b907-6953-4354-abe4-99c441e5b1b3", diet_type: "VEGAN"}
+  ],
+  allergy: [
+    {user_account_id: "ea39b907-6953-4354-abe4-99c441e5b1b3", diet_type: "DAIRY"}
+  ]
+}
+</code>
 
 > Example input parameters
 
@@ -794,16 +885,7 @@ allergy       | list        | list of {user_account_id: user_account_id, food_al
 }
 ```
 
-
-## Read User Profile
-
-Reading user profile should be processed when app gets loaded.
-
-
-
 ## Update Account Profile
-
-TODO. Diet restriction and food allergy should be updated here in the same query in future.
 
 ```graphql
 mutation UpdateAccount(
@@ -824,6 +906,20 @@ mutation UpdateAccount(
 }
 ```
 
+TODO. Diet restriction and food allergy should be updated here in the same query in future, but this has not been implemented.
+
+
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+user_account_id | uuid      | the user's database-generated ID
+nickname      | text        | new nickname
+bio           | text        | new bio
+link          | text        | new bio link
+thumbnailLink | text        | link to new thumbnail
+
+
 
 ## Update Baby Profile
 
@@ -843,15 +939,45 @@ mutation UpdateBaby(
     }
   }
 }
-
 ```
 
+
+> Example input parameter
+
+```graphql
+{
+  baby_id: "ea39b907-6953-4354-abe4-99c441e5b1b3",
+  name: "New Name",
+  sex_type: "MALE",
+  birthday: "2024-11-03"
+}
+```
+
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+baby_id       | uuid        | the baby's database-generated ID
+name          | text        | baby's new name
+sex_type      | enum        | baby's updated gender; either 'MALE' or 'FEMALE'
+birthday      | text        | baby's birthday in text format
+
+### Example input parameter
+<code>
+{
+  baby_id: "ea39b907-6953-4354-abe4-99c441e5b1b3",
+  name: "New Name",
+  sex_type: "MALE",
+  birthday: "2024-11-03"
+}
+</code>
 
 
 
 # Recipes
 
 Make sure to have these filters:
+
 - removed_at is null
 - recipe_status_id == COMPLETE
 - user_account.user_status is either ACTIVE_FREE or ACTIVE_PREMIUM
@@ -859,12 +985,29 @@ Make sure to have these filters:
 
 ## Get all recipes
 
+```graphql
+query GetAllSlugs{
+  recipe(where: 
+    {_and: {
+      recipe_status_id: {_eq: COMPLETE}, 
+      user_account: {user_status: {_nin: [DEACTIVATED, SUSPENDED]}}}, 
+      slug: {_is_null: false}
+    }
+  ) {
+    user_account {
+        nickname
+    }
+    slug
+    updated_at
+  }
+}
+```
+
+This query is called only when web version is generating sitemal.xml.
 
 
 
 ## Search recipes by search term
-
-Searching recipes based on title, description, recipe author's nickname, ingredients and tags.
 
 ```graphql
 query SearchRecipe($search_term: String!) {
@@ -893,9 +1036,18 @@ query SearchRecipe($search_term: String!) {
 }
 ```
 
+Searching recipes based on title, description, recipe author's nickname, ingredients and tags.
+
 <aside class="notice">
-We track what terms are being searched. Make sure to save search.
+We track what terms are being searched. Make sure to save search using the second query
 </aside>
+
+
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+search_term   | text        | search term
 
 ```graphql
 mutation SaveSearch($user_account_id: uuid!, $search_term: String!) {
@@ -905,10 +1057,16 @@ mutation SaveSearch($user_account_id: uuid!, $search_term: String!) {
 }
 ```
 
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+user_account_id | uuid      | The user's database-generated ID
+search_term   | text        | search term
+
+
 
 ## Fetch recipes for a specific ingredient
-
-This functionality is used primarily for food tracking page. 
 
 ```graphql
 query GetRecipeIngIntro($ing_intro: String!) {
@@ -934,10 +1092,19 @@ query GetRecipeIngIntro($ing_intro: String!) {
 
 ```
 
+This functionality is used primarily for food tracking page. 
+
+
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+ing_intro     | uuid        | Database-generated ID from ing_intro table
+
+
+
 
 ## Fetch recipes by one tag
-
-This functionality can be used when there is one specific recipe tag that you want to fetch recipes for. On the main page, when a user picks one category among popular recipe categories, this is the query to use.
 
 ```graphql
 query GetRecipeByTag($tag: tag_enum!) {
@@ -967,9 +1134,11 @@ query GetRecipeByTag($tag: tag_enum!) {
 }
 ```
 
-## Fetch recipes by more than one tags
+This functionality can be used when there is one specific recipe tag that you want to fetch recipes for. On the main page, when a user picks one category among popular recipe categories, this is the query to use.
 
-This functionality can be used when there is one or more specific recipe tags that you want to fetch. The main feed page on mobile app uses this query.
+
+
+## Fetch recipes by more than one tags
 
 ```graphql
 query GetRecipeByTag($tag: tag_enum!) {
@@ -999,9 +1168,34 @@ query GetRecipeByTag($tag: tag_enum!) {
 }
 ```
 
-## Fetch recipe detail by slug
+This functionality can be used when there is one or more specific recipe tags that you want to fetch. The main feed page on mobile app uses this query.
 
-Every recipe has a slug. This query fetches recipe detail given the slug.
+
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+tag           | text[]      | List of tag IDs
+
+### Example input parameter
+
+<code>
+{
+  tag: ["STAGE_ONE", "MORE_PROTEIN"]
+}
+</code>
+
+> Example input parameter
+
+```graphql
+{
+  tag: ["STAGE_ONE", "MORE_PROTEIN"]
+}
+```
+
+
+
+## Fetch recipe detail by slug
 
 ```graphql
 query GetRecipeDetail($slug: String!, $user_account_id: uuid!) {
@@ -1097,6 +1291,20 @@ query GetRecipeDetail($slug: String!, $user_account_id: uuid!) {
   }
 }
 ```
+Every recipe has a slug. This query fetches recipe detail given the slug.
+
+<aside class="notice">
+This requires the user's token because it retrieves whether this user liked / commented on this recipe.
+</aside>
+
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+slug          | text        | recipe slug
+user_account_id | uuid      | the user's database-generated ID
+
+
 
 ## Fetch recipe detail by recipe ID
 
@@ -1198,6 +1406,11 @@ query GetRecipeDetail($recipe_id: uuid!, $user_account_id: uuid!) {
 
 ```
 
+<aside class="warning">
+This query should retire. Please let Kay know when you see this being used.
+</aside>
+
+
 ## Save favorite recipe
 
 ```graphql
@@ -1206,12 +1419,58 @@ mutation SaveFavoriteRecipe($user_account_id: uuid!, $recipe_id: uuid!) {
     id
   }
 }
-
 ```
+
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+user_account_id | uuid      | the user's database-generated ID
+recipe_id     | uuid        | recipe ID
+
 
 
 ## Create a new recipe
-<code>
+
+```graphql
+mutation InsertRecipe(
+  $author_id: uuid!, 
+  $base_serving_num: Float!,
+  $complexity_type_id: complexity_type_enum = MEDIUM, 
+  $title: String!,
+  $description: String = "",
+  $link_pic: String = "", 
+  $total_time_min: Float!,
+  $slug: String!,
+  $recipe_ings: [recipe_ing_insert_input!] = {},
+  $recipe_nutrition: [recipe_nutrition_insert_input!] = {}, 
+  $recipe_steps: [recipe_step_insert_input!] = {}, 
+  $recipe_tags: [recipe_tag_insert_input!] = {} ) {
+  insert_recipe(objects: {
+    author_id: $author_id, 
+    base_serving_num: $base_serving_num, 
+    complexity_type_id: $complexity_type_id, 
+    description: $description, 
+    title: $title, 
+    total_time_min: $total_time_min,
+    link_pic: $link_pic, 
+    slug: $slug,
+    recipe_status_id: IN_REVIEW, 
+    recipe_ings: {data: $recipe_ings}, 
+    recipe_nutritions: {data: $recipe_nutrition}, 
+    recipe_steps: {data: $recipe_steps}, 
+    recipe_tags: {data: $recipe_tags}, 
+    }){
+      returning{
+        id
+      }
+    }
+}
+```
+
+Currently this is allowed in the mobile app, but we should get this built out on web shortly.
+
+```graphql
 {
   "author_id": "ea39b907-6953-4354-abe4-99c441e5b1b3",
   "base_serving_num": 1.5,
@@ -1281,115 +1540,12 @@ mutation SaveFavoriteRecipe($user_account_id: uuid!, $recipe_id: uuid!) {
     "is_primary": false
   }]
 }
-</code>
-
-```graphql
-mutation InsertRecipe(
-  $author_id: uuid!, 
-  $base_serving_num: Float!,
-  $complexity_type_id: complexity_type_enum = MEDIUM, 
-  $title: String!,
-  $description: String = "",
-  $link_pic: String = "", 
-  $total_time_min: Float!,
-  $slug: String!,
-  $recipe_ings: [recipe_ing_insert_input!] = {},
-  $recipe_nutrition: [recipe_nutrition_insert_input!] = {}, 
-  $recipe_steps: [recipe_step_insert_input!] = {}, 
-  $recipe_tags: [recipe_tag_insert_input!] = {} ) {
-  insert_recipe(objects: {
-    author_id: $author_id, 
-    base_serving_num: $base_serving_num, 
-    complexity_type_id: $complexity_type_id, 
-    description: $description, 
-    title: $title, 
-    total_time_min: $total_time_min,
-    link_pic: $link_pic, 
-    slug: $slug,
-    recipe_status_id: IN_REVIEW, 
-    recipe_ings: {data: $recipe_ings}, 
-    recipe_nutritions: {data: $recipe_nutrition}, 
-    recipe_steps: {data: $recipe_steps}, 
-    recipe_tags: {data: $recipe_tags}, 
-    }){
-      returning{
-        id
-      }
-    }
-}
 ```
 
+
+
 ## Edit a recipe
-<code>
-{
-  "recipe_id": "065d689d-2b52-4cf1-86b1-a221380e1b28",
-  "base_serving_num": 1.5,
-  "complexity_type_id": "EASY",
-  "title": "Title test",
-  "description": "Description",
-  "total_time_min": 15,
-  "recipe_ings": [{
-    "recipe_id": "065d689d-2b52-4cf1-86b1-a221380e1b28",
-    "ingredient_id": "4fbc6b95-2bd0-4655-9c30-112d9521980b",
-    "display_amount": "1 CUP",
-    "std_amount": 15,
-    "display_name": "Spinach"
-  }, {
-    "recipe_id": "065d689d-2b52-4cf1-86b1-a221380e1b28",
-    "ingredient_id": "4fbc6b95-2bd0-4655-9c30-112d9521980b",
-    "display_amount": "1 CUP",
-    "std_amount": 15,
-    "display_name": "Carrot, cubed"
-  }],
-  "recipe_nutrition": {
-    "added_sugar_G": 0,
-    "calcium_MG": 1,
-    "calories_KCAL": 2,
-    "carbohydrate_G": 3,
-    "cholesterol_MG": 4,
-    "choline_MG": 5,
-    "folatedfe_UG": 6,
-    "iron_MG": 7,
-    "magnesium_MG": 8,
-    "niacin_MG": 9,
-    "omega3_G": 10,
-    "omega6_G": 11,
-    "phosphorus_MG": 12,
-    "potassium_MG": 13,
-    "protein_G": 14,
-    "riboflavin_MG": 15,
-    "saturated_fatty_acids_G": 16,
-    "sodium_MG": 17,
-    "thiamin_MG": 18,
-    "total_dietary_fiber_G": 19,
-    "total_lipid_G": 20,
-    "vitamina_UG": 21,
-    "vitaminb12_UG": 22,
-    "vitaminb6_MG": 23,
-    "vitaminc_MG": 24,
-    "vitamind_UG": 25,
-    "vitamine_MG": 26,
-    "vitamink_UG": 27,
-    "zinc_MG": 28,
-    "total_sugar_G": 29,
-    "total_fatty_acids_G": 30,
-    "trans_fatty_acids_G": 31
-  },
-  "recipe_steps": [{
-    "recipe_id": "065d689d-2b52-4cf1-86b1-a221380e1b28",
-    "step_num": 1,
-    "description": "description1"
-  }, {
-    "recipe_id": "065d689d-2b52-4cf1-86b1-a221380e1b28",
-    "step_num": 2,
-    "description": "description2"
-  }],
-  "recipe_tags": [{
-    "recipe_id": "065d689d-2b52-4cf1-86b1-a221380e1b28",
-    "tag_id": "STAGE_ONE"
-  }]
-}
-</code>
+Currently this is allowed in the mobile app, but we should have this built out on web shortly.
 
 ```graphql
 
@@ -1459,6 +1615,76 @@ mutation InsertRecipe(
 
 ```
 
+```graphql
+{
+  "recipe_id": "065d689d-2b52-4cf1-86b1-a221380e1b28",
+  "base_serving_num": 1.5,
+  "complexity_type_id": "EASY",
+  "title": "Title test",
+  "description": "Description",
+  "total_time_min": 15,
+  "recipe_ings": [{
+    "recipe_id": "065d689d-2b52-4cf1-86b1-a221380e1b28",
+    "ingredient_id": "4fbc6b95-2bd0-4655-9c30-112d9521980b",
+    "display_amount": "1 CUP",
+    "std_amount": 15,
+    "display_name": "Spinach"
+  }, {
+    "recipe_id": "065d689d-2b52-4cf1-86b1-a221380e1b28",
+    "ingredient_id": "4fbc6b95-2bd0-4655-9c30-112d9521980b",
+    "display_amount": "1 CUP",
+    "std_amount": 15,
+    "display_name": "Carrot, cubed"
+  }],
+  "recipe_nutrition": {
+    "added_sugar_G": 0,
+    "calcium_MG": 1,
+    "calories_KCAL": 2,
+    "carbohydrate_G": 3,
+    "cholesterol_MG": 4,
+    "choline_MG": 5,
+    "folatedfe_UG": 6,
+    "iron_MG": 7,
+    "magnesium_MG": 8,
+    "niacin_MG": 9,
+    "omega3_G": 10,
+    "omega6_G": 11,
+    "phosphorus_MG": 12,
+    "potassium_MG": 13,
+    "protein_G": 14,
+    "riboflavin_MG": 15,
+    "saturated_fatty_acids_G": 16,
+    "sodium_MG": 17,
+    "thiamin_MG": 18,
+    "total_dietary_fiber_G": 19,
+    "total_lipid_G": 20,
+    "vitamina_UG": 21,
+    "vitaminb12_UG": 22,
+    "vitaminb6_MG": 23,
+    "vitaminc_MG": 24,
+    "vitamind_UG": 25,
+    "vitamine_MG": 26,
+    "vitamink_UG": 27,
+    "zinc_MG": 28,
+    "total_sugar_G": 29,
+    "total_fatty_acids_G": 30,
+    "trans_fatty_acids_G": 31
+  },
+  "recipe_steps": [{
+    "recipe_id": "065d689d-2b52-4cf1-86b1-a221380e1b28",
+    "step_num": 1,
+    "description": "description1"
+  }, {
+    "recipe_id": "065d689d-2b52-4cf1-86b1-a221380e1b28",
+    "step_num": 2,
+    "description": "description2"
+  }],
+  "recipe_tags": [{
+    "recipe_id": "065d689d-2b52-4cf1-86b1-a221380e1b28",
+    "tag_id": "STAGE_ONE"
+  }]
+}
+```
 
 ## Delete a recipe
 
@@ -1472,157 +1698,62 @@ mutation DeleteRecipe($recipe_id: uuid!) {
 }
 ```
 
-# ------ BOOKMARK
-
 # Meal Plans
 
-import { gql } from '@apollo/client';
+## Save a recipe to meal plan
 
-export const GQL_SAVE_MEAL_PLAN = gql`
-    mutation AddToMealPlan(
-    $planned_at: timestamp!, 
-    $recipe_id: uuid!, 
-    $user_account_id: uuid!) {
-    insert_recipe_hist(objects: {
-        user_account_id: $user_account_id, 
-        recipe_id: $recipe_id, 
-        planned_at: $planned_at}){
-            returning {
-            id
-            }
-        }
-    }
-`
-
-export const GQL_REMOVE_MEAL_PLAN = gql`
-mutation RemoveMealPlan($recipe_hist_id: uuid!) {
-  update_recipe_hist(where: {id: {_eq: $recipe_hist_id}}, _set: {removed_at: now}){
-    returning{
-      id
-    }
-  }
-}
-`
-
-export const GQL_UPDATE_MEAL_PLAN = gql`
-mutation UpdateMealPlan($recipe_hist_id: uuid!, $planned_at: timestamp!) {
-  update_recipe_hist(where: {id: {_eq: $recipe_hist_id}}, _set: {planned_at: $planned_at}){
-    returning{
-      id
-    }
-  }
-}
-`
-
-export const GQL_GET_MEAL_PLAN = gql`
-    query GetMealPlan(
-      $start_at: timestamp!, 
-      $user_account_id: uuid!
-    ) {
-    recipe_hist(where: {
-        removed_at: {_is_null: true}, 
-        planned_at: {_gte: $start_at}, 
-        user_account_id: {_eq: $user_account_id}
-    }) {
-        id
-        planned_at
-        served_at
-        reaction_id
-        served_amount
-        note
-        leftover
-        recipe {
-            id
-            title
-            link_pic
-            user_account {
-                nickname
-            }
-        }
-    }
-}
-`
-
-export const GQL_SAVE_REACTION = gql`
-    mutation SaveReaction(
-        $recipe_hist_id: uuid!, 
-        $reaction_id: reaction_type_enum!, 
-        $served_amount: Float!,
-        $note: String="",
-        $leftover: String="",
-    ) {
-        update_recipe_hist(
-            where: {id: {_eq: $recipe_hist_id}}, 
-            _set: {
-            reaction_id: $reaction_id, 
-            served_amount: $served_amount,
-            served_at:now,
-            note:$note,
-            leftover: $leftover
-            }) {
-            returning {
-              served_amount
-              leftover
-              recipe {
-                recipe_ings {
-                  ingredient {
-                    ing_intro {
-                      id
-                      allergen_type
-                      name
-                    }
-                    food_group_id
-                  }
-                }
-              }
-              
-            }
-        }
-    }
-`
-
-{
-  "objects": [
-    {
-      "user_account_id": "a1c5a247-b70d-4c0c-9f84-9f6bd5243391",
-    	"milestone_id": "ALLERGEN_SHELLFISH" 
-    },
-    {
-      "user_account_id": "a1c5a247-b70d-4c0c-9f84-9f6bd5243391",
-    	"milestone_id": "ALLERGEN_EGG" 
-    }
-  ]
-}
-export const GQL_EARN_MILESTONE = gql`
-mutation AddMilestone($objects: [user_milestone_insert_input!]!) {
-  insert_user_milestone(
-    objects: $objects,
-    on_conflict: {
-      constraint: user_milestone_pkey,    
-      update_columns: [] 
-    }
-  ) {
+```graphql
+mutation AddToMealPlan(
+  $planned_at: timestamp!, 
+  $recipe_id: uuid!, 
+  $user_account_id: uuid!
+) {
+  insert_recipe_hist(objects: {
+    user_account_id: $user_account_id, 
+    recipe_id: $recipe_id, 
+    planned_at: $planned_at}
+  ){
     returning {
       id
     }
   }
 }
+```
 
-`
+> Example input parameter
 
-
+```graphql
 {
-  "objects": [
-    {"recipe_id": "6a990e5b-d42c-4d10-9794-fe42ca888b19",
-     "planned_at": "1/8/2024",
-     "user_account_id": "4782a261-7d65-4b2a-8850-a4505320d3fc"},
-    {"recipe_id": "6a990e5b-d42c-4d10-9794-fe42ca888b19",
-     "planned_at": "1/9/2024",
-     "user_account_id": "4782a261-7d65-4b2a-8850-a4505320d3fc"}
-  ]
+  user_account_id: "065d689d-2b52-4cf1-86b1-a221380e1b28",
+  recipe_id: "065d689d-2b52-4cf1-86b1-a221380e1b28",
+  planned_at: "2024-11-02"
 }
+```
 
-export const GQL_ADD_ALL_MEALS = gql`
+This is used when a user manually adds a recipe to a meal plan
+
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+user_account_id | uuid      | the user's database-generated ID
+recipe_id     | uuid        | recipe ID
+planned_at    | timestamp   | the date that a recipe is added to in meal plan
+
+### Example input parameters
+
+<code>
+{
+  user_account_id: "065d689d-2b52-4cf1-86b1-a221380e1b28",
+  recipe_id: "065d689d-2b52-4cf1-86b1-a221380e1b28",
+  planned_at: "2024-11-02"
+}
+</code>
+
+
+## Save a batch of meal plan
+
+```graphql
 mutation AddAllFromRecEngine($objects: [recipe_hist_insert_input!] = {}) {
   insert_recipe_hist(objects: $objects){
     returning{
@@ -1666,10 +1797,256 @@ mutation AddAllFromRecEngine($objects: [recipe_hist_insert_input!] = {}) {
     }
   }
 }
+```
 
-`
+```graphql
+{
+  "objects": [
+    {"recipe_id": "6a990e5b-d42c-4d10-9794-fe42ca888b19",
+     "planned_at": "1/8/2024",
+     "user_account_id": "4782a261-7d65-4b2a-8850-a4505320d3fc"},
+    {"recipe_id": "6a990e5b-d42c-4d10-9794-fe42ca888b19",
+     "planned_at": "1/9/2024",
+     "user_account_id": "4782a261-7d65-4b2a-8850-a4505320d3fc"}
+  ]
+}
+```
+
+The query above returns recipe_hist_id and recipe.recipe_nutrition.
 
 
+
+## Remove from meal plan
+```graphql
+mutation RemoveMealPlan($recipe_hist_id: uuid!) {
+  update_recipe_hist(where: {id: {_eq: $recipe_hist_id}}, _set: {removed_at: now}){
+    returning{
+      id
+    }
+  }
+}
+```
+
+<aside class="notice">
+Note that it is purely going by recipe_hist_id. The user-specificity is enforced in jwt token.
+</aside>
+
+
+## Update one meal plan menu
+
+```graphql
+mutation UpdateMealPlan($recipe_hist_id: uuid!, $planned_at: timestamp!) {
+  update_recipe_hist(where: {id: {_eq: $recipe_hist_id}}, _set: {planned_at: $planned_at}){
+    returning{
+      id
+    }
+  }
+}
+```
+
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+recipe_hist_id | uuid       | the user's meal plan data entry ID from recipe_hist table
+planned_at    | timestamp   | the date that a recipe is added to in meal plan
+
+
+
+## Read meal plan
+
+```graphql
+query GetMealPlan(
+  $start_at: timestamp!, 
+  $user_account_id: uuid!
+) {
+  recipe_hist(where: {
+    removed_at: {_is_null: true}, 
+    planned_at: {_gte: $start_at}, 
+    user_account_id: {_eq: $user_account_id}
+  }) {
+    id
+    planned_at
+    served_at
+    reaction_id
+    served_amount
+    note
+    leftover
+    recipe {
+      id
+      title
+      link_pic
+      user_account {
+        nickname
+      }
+    }
+  }
+}
+
+```
+
+> Example input parameter:
+
+```graphql
+{
+  user_account_id: "a1c5a247-b70d-4c0c-9f84-9f6bd5243391",
+  start_at: "2024-11-01"
+}
+```
+
+
+### Parameters:
+
+Parameter | Type        | Description
+--------- | ----------- | -----------
+user_account_id | uuid  | the user's database-generated ID
+start_at  | timestamp   | data load look back date. E.g. if entered '2024-11-01', it fetches meal plan from '2024-11-01'.
+
+
+## Save tracking for meal plan
+
+```graphql
+mutation SaveReaction(
+    $recipe_hist_id: uuid!, 
+    $reaction_id: reaction_type_enum!, 
+    $served_amount: Float!,
+    $note: String="",
+    $leftover: String="",
+) {
+  update_recipe_hist(
+    where: {id: {_eq: $recipe_hist_id}}, 
+    _set: {
+      reaction_id: $reaction_id, 
+      served_amount: $served_amount,
+      served_at:now,
+      note:$note,
+      leftover: $leftover
+    }
+  ) {
+    returning {
+      served_amount
+      leftover
+      recipe {
+        recipe_ings {
+          ingredient {
+            ing_intro {
+              id
+              allergen_type
+              name
+            }
+            food_group_id
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+
+> Example input parameter:
+
+```graphql
+{
+  recipe_hist_id: "a1c5a247-b70d-4c0c-9f84-9f6bd5243391",
+  reaction_id: "LIKE",
+  served_amount: 1.5,
+  note: "It was good",
+  leftover: "Didn't eat broccoli"
+}
+```
+
+
+### Parameters:
+
+Parameter         | Type        | Description
+----------------- | ----------- | -----------
+reaction_hist_id  | uuid        | meal plan entry ID from recipe_hist_id
+reaction_id       | enum        | LIKE, NEUTRAL, or DISLIKE
+served_amount     | real        | the serving size that the kid ate
+note              | text        | note about this intake
+leftover          | text        | description of what was being left
+
+
+### Example input parameter
+<code>
+{
+  recipe_hist_id: "a1c5a247-b70d-4c0c-9f84-9f6bd5243391",
+  reaction_id: "LIKE",
+  served_amount: 1.5,
+  note: "It was good",
+  leftover: "Didn't eat broccoli"
+}
+</code>
+
+
+## Save milestones
+
+```graphql
+mutation AddMilestone($objects: [user_milestone_insert_input!]!) {
+  insert_user_milestone(
+    objects: $objects,
+    on_conflict: {
+      constraint: user_milestone_pkey,    
+      update_columns: [] 
+    }
+  ) {
+    returning {
+      id
+    }
+  }
+}
+```
+
+> Example input parameter
+
+```graphql
+{
+  "objects": [
+    {
+      "user_account_id": "a1c5a247-b70d-4c0c-9f84-9f6bd5243391",
+    	"milestone_id": "ALLERGEN_SHELLFISH" 
+    },
+    {
+      "user_account_id": "a1c5a247-b70d-4c0c-9f84-9f6bd5243391",
+    	"milestone_id": "ALLERGEN_EGG" 
+    }
+  ]
+}
+```
+
+
+### Parameters:
+
+Parameter         | Type        | Description
+----------------- | ----------- | -----------
+objects           | list        | list of {user_account_id, milestone_id}
+
+### Example input parameter
+
+<code>
+{
+  "objects": [
+    {
+      "user_account_id": "a1c5a247-b70d-4c0c-9f84-9f6bd5243391",
+    	"milestone_id": "ALLERGEN_SHELLFISH" 
+    },
+    {
+      "user_account_id": "a1c5a247-b70d-4c0c-9f84-9f6bd5243391",
+    	"milestone_id": "ALLERGEN_EGG" 
+    }
+  ]
+}
+</code>
+
+
+
+
+
+
+
+
+# ----------- WIP below
 
 
 # Social
@@ -2105,6 +2482,8 @@ mutation UpdateIngIntroStatus(
 
 ## Food Allerty
 
+
+# ----- B2B
 
 
 

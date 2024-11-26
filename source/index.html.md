@@ -2040,74 +2040,17 @@ objects           | list        | list of {user_account_id, milestone_id}
 </code>
 
 
-
-
-
-
-
-
-# ----------- WIP below
-The below is WIP.
-
 # Social
 
 
-import { gql } from "@apollo/client";
+## Get feed
 
-{
-  "commenter_uid": "CqznSvrThLfZjrDqlDQrFVhDwpI2",
-  "post_id": "7177a1bb-875f-4836-939a-7600e7c134cd",
-  "comment":"hi"
-}
-
-
-export const GQL_COMMENT_RECIPE = gql`
-mutation InsertComment($commenter_id: uuid!, $recipe_id: uuid!, $comment: String!) {
-  insert_comments_one(object: {commenter_id: $commenter_id, recipe_id: $recipe_id, comment: $comment}) {
-    id
-  }
-}
-`
-
-
-{
-  "post_id": "7177a1bb-875f-4836-939a-7600e7c134cd",
-  "liker_uid":"CqznSvrThLfZjrDqlDQrFVhDwpI2"
-}
-
-export const GQL_LIKE_RECIPE = gql`
-mutation InsertLike($liker_id: uuid!, $recipe_id: uuid!) {
-  insert_likes_one(object: {liker_id: $liker_id, recipe_id: $recipe_id}){
-    id
-  }
-}
-`
-
-
-export const GQL_UNLIKE_RECIPE = gql`
-mutation RemoveLike ($liker_id: uuid!, $recipe_id:uuid!){
-  update_likes(where: {liker_id: {_eq: $liker_id}, recipe_id: {_eq: $recipe_id}}, 
-    _set: {removed_at: now}){
-    returning {
-      id
-    }
-  }
-}
-`
-
-
-
-
-{
-    "recipe_offset": 0,
-    "recipe_limit": 10,
-    "uid": "test"
-  }
-export const GQL_GET_FEED_FOLLOWING = gql`
+```graphql
 query GetFeed(
   $recipe_offset: Int!, 
   $recipe_limit: Int!, 
-  $user_account_id: uuid!) @cached {
+  $user_account_id: uuid!
+) @cached {
   recipe(
     offset: $recipe_offset, 
     limit: $recipe_limit, 
@@ -2117,7 +2060,8 @@ query GetFeed(
       user_account: {_or: [
         {uid: {_ilike: "%admin%"}},
         {id: {_eq: $user_account_id}},
-        {user_follows: {follower_id: {_eq: $user_account_id}}}]}}) {
+        {user_follows: {follower_id: {_eq: $user_account_id}}}]}}
+  ) {
     id
     user_account {
       uid
@@ -2163,42 +2107,44 @@ query GetFeed(
     thumbnail_link
   }
 }
-`
-   {user_follows: {follower_id: {_neq: $user_account_id}}} TODO put this back to filter out the accounts that user is already following
+```
 
+> Example input parameter
 
-export const GQL_UNFOLLOW = gql`
-mutation UpdateUnfollow($follower_id: uuid!, $followee_id: uuid!) {
-  update_user_follow(where: {followee_id: {_eq: $followee_id}, follower_id: {_eq: $follower_id}}, _set: {removed_at: now}){
-    returning {
-      id
-    }
-  }
-}
-`
-
-
+```graphql
 {
-  "follower_uid": "CqznSvrThLfZjrDqlDQrFVhDwpI2",
-  "followee_uid": "C83AqbDPRzdhPghTdIGRt6tl2Do2"
+    "user_account_id": "7177a1bb-875f-4836-939a-7600e7c134cd"
+    "recipe_offset": 0,
+    "recipe_limit": 10,
 }
+```
 
-export const GQL_FOLLOW = gql`
-mutation InsertFollow ($follower_id: uuid!, $followee_id: uuid!) {
-  insert_user_follow_one(object: {follower_id: $follower_id, followee_id: $followee_id}) {
-    id
-  }
-}
-`
+Note that this query outputs five other users that we recommend to follow. However, currently we do not properly filter out those that the user is already following because of limitation in query method. We will revisit this.
+
+TODO: <code>{user_follows: {follower_id: {_neq: $user_account_id}}}</code> put this back to filter out the accounts that user is already following.
 
 
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+user_account_id | uuid      | the user's database-generated ID
+recipe_offset | integer     | the number of recipes as offset
+recipe_limit  | integer     | limit in the number of recipes to return
+
+### Example input parameters
+
+<code>
 {
-  "uid": "test",
-  "recipe_offset": 0,
-  "recipe_limit": 10,
+    "user_account_id": "7177a1bb-875f-4836-939a-7600e7c134cd"
+    "recipe_offset": 0,
+    "recipe_limit": 10,
 }
+</code>
 
-export const GQL_GET_USER = gql`
+
+## Fetch a user profile
+```graphql
 query fetchUserData($nickname: String!) {
   user_account(where: {nickname: {_eq: $nickname}}) {
     id
@@ -2213,7 +2159,11 @@ query fetchUserData($nickname: String!) {
     userFollowsByFollowerId(where: {removed_at: {_is_null: true}}, distinct_on: followee_id) {
       followee_id
     }
-    recipes{
+    recipes(where: {_and: {
+      recipe_status_id: {_eq: COMPLETE}, 
+      user_account: {user_status: {_nin: [DEACTIVATED, SUSPENDED]}}}, 
+      slug: {_is_null: false}}
+    ){
       id
       title
       link_pic
@@ -2227,28 +2177,230 @@ query fetchUserData($nickname: String!) {
     }
   }
 }
+```
 
+> Example input parameter
 
-`
-
-
-
-
+```graphql
 {
-  "tag_filter": ["ALLERGEN_FREE_EGG", "STAGE_ONE"]
+  nickname: "heartful-blw"
 }
-export const GQL_GET_FEED_FOR_YOU = gql`
-query MyQuery($tag_filter:[tag_enum!]) {
-  recipe(where: {recipe_tags: {tag_id: {_in: $tag_filter,}}}) {
+```
+
+This is used when one visits a user's page. This fetches data to populate the visited user's page.
+
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+nickname      | text        | nickname of the visitee
+
+### Example input parameters
+
+<code>
+{
+  nickname: "heartful-blw"
+}
+</code>
+
+## Comment on a recipe
+
+```graphql
+mutation InsertComment($commenter_id: uuid!, $recipe_id: uuid!, $comment: String!) {
+  insert_comments_one(object: {commenter_id: $commenter_id, recipe_id: $recipe_id, comment: $comment}) {
     id
-    link_pic
   }
 }
-`
+```
+
+> Example input parameter
+
+```graphql
+{
+  commenter_id: "065d689d-2b52-4cf1-86b1-a221380e1b28",
+  recipe_id: "065d689d-2b52-4cf1-86b1-a221380e1b28",
+  comment: "Looking delicious!"
+}
+```
+
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+user_account_id | uuid      | the user's database-generated ID
+recipe_id     | uuid        | recipe ID
+comment       | text        | comment
+
+### Example input parameters
+
+<code>
+{
+  commenter_id: "065d689d-2b52-4cf1-86b1-a221380e1b28",
+  recipe_id: "065d689d-2b52-4cf1-86b1-a221380e1b28",
+  comment: "Looking delicious!"
+}
+</code>
+
+
+## Like a recipe
+
+```graphql
+mutation InsertLike($liker_id: uuid!, $recipe_id: uuid!) {
+  insert_likes_one(object: {liker_id: $liker_id, recipe_id: $recipe_id}){
+    id
+  }
+}
+```
+
+> Example input parameter
+
+```graphql
+{
+  "liker_id": "7177a1bb-875f-4836-939a-7600e7c134cd",
+  "recipe_id": "7177a1bb-875f-4836-939a-7600e7c134cd",
+}
+```
+
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+liker_id      | uuid        | the user's database-generated ID
+recipe_id     | uuid        | recipe ID
+
+### Example input parameters
+
+<code>
+{
+  "liker_id": "7177a1bb-875f-4836-939a-7600e7c134cd",
+  "recipe_id": "7177a1bb-875f-4836-939a-7600e7c134cd",
+}
+</code>
 
 
 
-export const GQL_INSERT_RECIPE_FLAG = gql`
+## Unlike a recipe
+
+```graphql
+mutation RemoveLike ($liker_id: uuid!, $recipe_id:uuid!){
+  update_likes(where: {liker_id: {_eq: $liker_id}, recipe_id: {_eq: $recipe_id}}, 
+    _set: {removed_at: now}){
+    returning {
+      id
+    }
+  }
+}
+```
+
+> Example input parameter
+
+```graphql
+{
+  "liker_id": "7177a1bb-875f-4836-939a-7600e7c134cd",
+  "recipe_id": "7177a1bb-875f-4836-939a-7600e7c134cd",
+}
+```
+
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+liker_id      | uuid        | the user's database-generated ID
+recipe_id     | uuid        | recipe ID
+
+### Example input parameters
+
+<code>
+{
+  "liker_id": "7177a1bb-875f-4836-939a-7600e7c134cd",
+  "recipe_id": "7177a1bb-875f-4836-939a-7600e7c134cd",
+}
+</code>
+
+
+
+## Follow a user
+
+```graphql
+mutation InsertFollow ($follower_id: uuid!, $followee_id: uuid!) {
+  insert_user_follow_one(object: {follower_id: $follower_id, followee_id: $followee_id}) {
+    id
+  }
+}
+```
+
+> Example input parameter
+
+```graphql
+{
+  "follower_id": "7177a1bb-875f-4836-939a-7600e7c134cd",
+  "followee_id": "7177a1bb-875f-4836-939a-7600e7c134cd"
+}
+```
+
+Only a follower can insert a relationship here. 
+
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+follower_id   | uuid        | the user ID of the follower
+followee_id   | uuid        | the user ID of the followee
+
+### Example input parameters
+
+<code>
+{
+  "follower_id": "7177a1bb-875f-4836-939a-7600e7c134cd",
+  "followee_id": "7177a1bb-875f-4836-939a-7600e7c134cd"
+}
+</code>
+
+
+
+
+## Unfollow a user
+
+```graphql
+mutation UpdateUnfollow($follower_id: uuid!, $followee_id: uuid!) {
+  update_user_follow(where: {followee_id: {_eq: $followee_id}, follower_id: {_eq: $follower_id}}, _set: {removed_at: now}){
+    returning {
+      id
+    }
+  }
+}
+```
+
+> Example input parameter
+
+```graphql
+{
+  "follower_id": "7177a1bb-875f-4836-939a-7600e7c134cd",
+  "followee_id": "7177a1bb-875f-4836-939a-7600e7c134cd"
+}
+```
+
+Only a follower can delete a relationship here. 
+
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+follower_id   | uuid        | the user ID of the follower
+followee_id   | uuid        | the user ID of the followee
+
+### Example input parameters
+
+<code>
+{
+  "follower_id": "7177a1bb-875f-4836-939a-7600e7c134cd",
+  "followee_id": "7177a1bb-875f-4836-939a-7600e7c134cd"
+}
+</code>
+
+
+## Report a recipe
+```graphql
 mutation ReportRecipe($reporter_id: uuid = "", $recipe_id: uuid = "") {
   insert_flag(objects: {reporter_id: $reporter_id, recipe_id: $recipe_id}) {
     returning{
@@ -2256,10 +2408,38 @@ mutation ReportRecipe($reporter_id: uuid = "", $recipe_id: uuid = "") {
     }
   }
 }
- 
-`
+```
 
-export const GQL_INSERT_USER_FLAG = gql`
+> Example input parameter
+
+```graphql
+{
+  "reporter_id": "7177a1bb-875f-4836-939a-7600e7c134cd",
+  "recipe_id": "7177a1bb-875f-4836-939a-7600e7c134cd"
+}
+```
+
+Only a follower can delete a relationship here. 
+
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+reporter_id   | uuid        | the user ID
+recipe_id     | uuid        | the recipe ID 
+
+### Example input parameters
+
+<code>
+{
+  "reporter_id": "7177a1bb-875f-4836-939a-7600e7c134cd",
+  "recipe_id": "7177a1bb-875f-4836-939a-7600e7c134cd"
+}
+</code>
+
+
+## Report a user
+```graphql
 mutation ReportUser($reporter_id: uuid = "", $user_id: uuid = "") {
   insert_flag(objects: {reporter_id: $reporter_id, user_id: $user_id}) {
     returning{
@@ -2267,13 +2447,38 @@ mutation ReportUser($reporter_id: uuid = "", $user_id: uuid = "") {
     }
   }
 }
+```
 
- 
-`
+> Example input parameter
 
+```graphql
+{
+  "reporter_id": "7177a1bb-875f-4836-939a-7600e7c134cd",
+  "user_id": "7177a1bb-875f-4836-939a-7600e7c134cd"
+}
+```
+
+Only a follower can delete a relationship here. 
+
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+reporter_id   | uuid        | ID of the user that is being flagged
+uer_id        | uuid        | ID of the user who is reporting
+
+### Example input parameters
+
+<code>
+{
+  "reporter_id": "7177a1bb-875f-4836-939a-7600e7c134cd",
+  "recipe_id": "7177a1bb-875f-4836-939a-7600e7c134cd"
+}
+</code>
 
 
 # Health Records
+
 Health records include growth data, and food reaction.
 
 ## Growth Records
@@ -2291,7 +2496,6 @@ mutation EnterGrowthData($growth: [baby_growth_hist_insert_input!] = {}) {
 ```
 
 > Example input parameters:
-
 
 ```graphql
 const growthFormatted = [
@@ -2332,23 +2536,19 @@ insertGrowth({
 
 Input data should be a list of objects with the following fields:
 
-Parameter | Type | Description
---------- | ----------- | -----------
-baby_id | uuid | ID from baby_profile table
-days | number | the baby's age in days
-growth_type_id | enum | 'WEIGHT', 'HEIGHT', or 'BMI'
-percentile | integer | the growth percentile that the app has calculated
-value | float | the growth measure for weight, height, or bmi
+Parameter       | Type        | Description
+--------------- | ----------- | -----------
+baby_id         | uuid        | ID from baby_profile table
+days            | number      | the baby's age in days
+growth_type_id  | enum        | 'WEIGHT', 'HEIGHT', or 'BMI'
+percentile      | integer     | the growth percentile that the app has calculated
+value           | float       | the growth measure for weight, height, or bmi
 
 
-
-### Read
-
-This part is automatically pulled in when app is loaded with proper account information
 
 
 ### Update
-
+Currently this functionality is not implemented. Users delete a record and re-enter the data.
 
 
 ### Delete
@@ -2369,7 +2569,6 @@ Parameter | Type | Description
 --------- | ----------- | -----------
 baby_id | uuid | ID from baby_profile table
 daysDays | number | the baby's age in days
-
 
 
 ## Food Reactions
@@ -2396,7 +2595,39 @@ mutation EnterReactionData(
 }
 ```
 
-### Read
+
+> Example input parameter
+
+```graphql
+{
+  user_account_id: "ea39b907-6953-4354-abe4-99c441e5b1b3",
+  entered_at: "2024-11-03"
+  baby_profile_id: "ea39b907-6953-4354-abe4-99c441e5b1b3",
+  reaction: "HIVE",
+  note: "Got hive..."
+}
+```
+
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+user_account_id | uuid      | database-generated ID of the user
+baby_profile_id | uuid      | the baby's database-generated ID
+entered_at    | timestamp   | the record time
+reaction      | enum        | reaction types (see Codes)
+note          | text        | description of the reaction
+
+### Example input parameter
+<code>
+{
+  user_account_id: "ea39b907-6953-4354-abe4-99c441e5b1b3",
+  entered_at: "2024-11-03"
+  baby_profile_id: "ea39b907-6953-4354-abe4-99c441e5b1b3",
+  reaction: "HIVE",
+  note: "Got hive..."
+}
+</code>
 
 
 ### Update
@@ -2419,6 +2650,36 @@ mutation UpdateReaction(
 }
 ```
 
+> Example input parameter
+
+```graphql
+{
+  id: "ea39b907-6953-4354-abe4-99c441e5b1b3",
+  entered_at: "2024-11-03"
+  reaction: "HIVE",
+  note: "Got hive..."
+}
+```
+
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+id            | uuid        | ID of existing reaction entry
+entered_at    | timestamp   | the record time
+reaction      | enum        | reaction types (see Codes)
+note          | text        | description of the reaction
+
+### Example input parameter
+<code>
+{
+  id: "ea39b907-6953-4354-abe4-99c441e5b1b3",
+  entered_at: "2024-11-03"
+  reaction: "HIVE",
+  note: "Got hive..."
+}
+</code>
+
 
 ### Delete
 
@@ -2437,11 +2698,26 @@ mutation DeleteReaction(
 }
 ```
 
+> Example input parameter
 
+```graphql
+{
+  id: "ea39b907-6953-4354-abe4-99c441e5b1b3"
+}
+```
 
+### Parameters
 
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+id            | uuid        | ID of existing record entry
 
-
+### Example input parameter
+<code>
+{
+  id: "ea39b907-6953-4354-abe4-99c441e5b1b3"
+}
+</code>
 
 
 # Food Tracking
@@ -2471,57 +2747,542 @@ mutation UpdateIngIntroStatus(
 }
 ```
 
+> Example input parameter
 
+```graphql
+{
+  baby_id: "ea39b907-6953-4354-abe4-99c441e5b1b3",
+  ing_intro_id: "ea39b907-6953-4354-abe4-99c441e5b1b3",
+  attempted_at: "2024-11-04",
+  mastered_at: null
+}
+```
+
+### Parameters
+
+Parameter     | Type        | Description
+------------- | ----------- | -----------
+baby_id       | uuid        | baby ID
+ing_intro_id  | uuid        | food item ID
+attempted_at  | timestamp   | timestamp of first attempting this food
+mastered_at   | timestamp   | timestamp of mastering this food intro
+
+
+### Example input parameter
+<code>
+{
+  baby_id: "ea39b907-6953-4354-abe4-99c441e5b1b3",
+  ing_intro_id: "ea39b907-6953-4354-abe4-99c441e5b1b3",
+  attempted_at: "2024-11-04",
+  mastered_at: null
+}
+</code>
 
 
 # Codes
 
 ## Recipe Tag
+Value | Comment | Type
+-------|---------|------
+COURSE_APPETIZER | Appetizers | Course
+COURSE_BEVERAGES | Beverages | Course
+COURSE_BREADS | Breads | Course
+COURSE_BREAKFAST | Breakfast | Course
+COURSE_DESSERTS | Desserts | Course
+COURSE_MAIN | Main dishes | Course
+COURSE_PUREE | Purees | Course
+COURSE_SALADS | Salads | Course
+COURSE_SANDWICHES | Sandwiches | Course
+COURSE_SAUCE | Dressings and sauces | Course
+COURSE_SIDE | Sides | Course
+COURSE_SNACK | Snack | Course
+COURSE_SOUP | Soups and stews | Course
+GOALS_VEGGIES | Vegetables and fruits | Nutrition Goal
+GOALS_SEAFOOD | Seafoods | Nutrition Goal
+GOALS_GRAINS | Whole grains | Nutrition Goal
+GOALS_FAT_FREE | Fat free or low | Nutrition Goal
+GOALS_PROTEIN | Vary protein options | Nutrition Goal
+GOALS_CALCIUM | Calcium | Nutrition Goal
+GOALS_LOW_SAT_FAT | Low saturated fat | Nutrition Goal
+GOALS_LOW_SODIUM | Low sodium | Nutrition Goal
+FOODGROUP_FRUITS | Fruits | Food Group
+FOODGROUP_VEGETABLES | Vegetables | Food Group
+FOODGROUP_GRAINS | Grains | Food Group
+FOODGROUP_PROTEINS | Proteins | Food Group
+FOODGROUP_DAIRY | Dairy | Food Group
+EQUIP_BLENDER | Blender | Equipment
+EQUIP_NOTHING | No equipment needed | Equipment
+EQUIP_GRILL | Grill | Equipment
+EQUIP_MICROWAVE | Microwave | Equipment
+EQUIP_OVEN | Oven | Equipment
+EQUIP_STOVETOP | Stovetop | Equipment
+EQUIP_SLOW_COOKER | Slow cooker | Equipment
+EQUIP_UTENSIL | Forks and spoons | Equipment
+EQUIP_TOASTER | Toaster | Equipment
+EQUIP_ICE_CUBE | Ice cube trays | Equipment
+CUISINE_AMERICAN | American | Cuisine
+CUISINE_ASIAN | Asian | Cuisine
+CUISINE_HISPANIC | Hispanic | Cuisine
+CUISINE_MEDITERRANEAN | Mediterranean | Cuisine
+CUISINE_MIDDLE_EASTERN | Middle eastern | Cuisine
+CUISINE_NATIVE_AMERICAN | Native American | Cuisine
+CUISINE_SOUTHERN | Southern | Cuisine
+CUISINE_VEGETARIAN | Vegetarian | Cuisine
+CUISINE_VEGAN | Vegan | Cuisine
+CUISINE_HALAL | Halal | Cuisine
+CUISINE_KOSHER | Kosher | Cuisine
+SEASONAL_EASTER | Easter | Seasonal
+SEASONAL_THANKSGIVING | Thanksgiving | Seasonal
+SEASONAL_HANUKKAH | Hanukkah | Seasonal
+SEASONAL_CHRISTMAS | Christmas | Seasonal
+SEASONAL_NEW_YEAR | New year | Seasonal
+SEASONAL_LUNAR_NEW_YEAR | Lunar new year | Seasonal
+SEASONAL_CINCO_DE_MAYO | Cinco de mayo | Seasonal
+ALLERGEN_INTRO_MILK | Allergen Intro (Milk) | Allergen Intro
+ALLERGEN_INTRO_EGG | Allergen Intro (Egg) | Allergen Intro
+ALLERGEN_INTRO_PEANUTS | Allergen Intro (Peanuts) | Allergen Intro
+ALLERGEN_INTRO_TREENUTS | Allergen Intro (Treenuts) | Allergen Intro
+ALLERGEN_INTRO_SOY | Allergen Intro (Soy) | Allergen Intro
+ALLERGEN_INTRO_WHEAT | Allergen Intro (Wheat) | Allergen Intro
+ALLERGEN_INTRO_FISH | Allergen Intro (Fish) | Allergen Intro
+ALLERGEN_INTRO_SHELLFISH | Allergen Intro (Shellfish) | Allergen Intro
+ALLERGEN_FREE_MILK | Avoid allergen (Milk) | Allergen Free
+ALLERGEN_FREE_EGG | Avoid allergen (Egg) | Allergen Free
+ALLERGEN_FREE_PEANUTS | Avoid allergen (Peanuts) | Allergen Free
+ALLERGEN_FREE_TREENUTS | Avoid allergen (Treenuts) | Allergen Free
+ALLERGEN_FREE_SOY | Avoid allergen (Soy) | Allergen Free
+ALLERGEN_FREE_WHEAT | Avoid allergen (Wheat) | Allergen Free
+ALLERGEN_FREE_FISH | Avoid allergen (Fish) | Allergen Free
+ALLERGEN_FREE_SHELLFISH | Avoid allergen (Shellfish) | Allergen Free
+CUISINE_INDIAN | Indian | Cuisine
+TEXTURE_SMOOTH | Smooth puree | Texture
+TEXTURE_THICKER | Thicker Puree | Texture
+TEXTURE_CHEWABLE | Soft and chewable | Texture
+TEXTURE_WHOLE | Whole foods | Texture
+STAGE_ONE | Stage 1 (4-6m) | Stage
+STAGE_TWO | Stage 2 (6-9m) | Stage
+STAGE_THREE | Stage 3 (9-12m) | Stage
+STAGE_BLW | Finger foods (BLW) | Stage
+STAGE_TODDLER | Toddler foods | Stage
+STAGE_FAMILY | Family foods | Stage
+SEASONAL | Seasonal | Category
+HEALTH_GUT | Gut health | Health
+HEALTH_IMMUNE | Immune system | Health
+HEALTH_CARDIO | Cardiovascular health | Health
+HEALTH_SKIN | Skin health | Health
+HEALTH_BRAIN | Brain development | Health
+HEALTH_VISION | Vision | Health
+HEALTH_BONE | Bone health | Health
+HEALTH_NERVE | Cognitive system | Health
+HEALTH_SUPPORTIVE | Supporting other nutrition absorption | Health
+HEALTH_ANTIOXIDANT | Anti-inflammatory, anti-oxidant, and anti-aging | Health
+HEALTH_CELL | Cellular growth | Health
+HEALTH_DIGESTION | Digestion | Health
+HEALTH_ENERGY | Energy | Health
+HEALTH_BLOOD | Blood health | Health
+HEALTH_METABOLISM | Healthy metabolism | Health
+GOALS_IRON | Iron sufficient | Nutrition Goal
+EQUIP_AIRFRYER | Air fryer | Equipment
+ALLERGEN_INTRO_SESAME | Introduce sesame | Allergen Intro
+ALLERGEN_FREE_SESAME | Does not contain sesame | Allergen Free
+OTHERS_COOKING_ACTIVITIES | Cooking with kids | Other
 
 ## Diet Restriction
 
-## Food Allerty
+Value | Comment
+-------|--------
+VEGETARIAN | Vegetarian
+VEGAN | Vegan
+PESCATARIAN | Pescatarian
+HALAL | Halal
+KOSHER | Kosher
+GLUTEN_FREE | Gluten-free
+FOOD_ALLERGY | Food Allergy
+LACTOSE_INTOLERANT | Lactose-intolerant
+
+
+## Food Allergy
+
+| Value                     | Comment        | Category           |
+|---------------------------|----------------|--------------------|
+| COMMON_MILK              | Milk           | Common Allergens   |
+| COMMON_EGGS              | Eggs           | Common Allergens   |
+| COMMON_PEANUTS           | Peanuts        | Common Allergens   |
+| COMMON_TREE_NUTS         | Tree nuts      | Common Allergens   |
+| COMMON_SOY               | Soy            | Common Allergens   |
+| COMMON_WHEAT             | Wheat          | Common Allergens   |
+| COMMON_FISH              | Fish           | Common Allergens   |
+| COMMON_SHELLFISH         | Shellfish      | Common Allergens   |
+| COMMON_SESAME            | Sesame         | Common Allergens   |
+| DAIRY_CASEIN             | Casein         | Dairy              |
+| DAIRY_WHEY               | Whey           | Dairy              |
+| DAIRY_LACTOSE            | Lactose        | Dairy              |
+| DAIRY_BUTTER             | Butter         | Dairy              |
+| DAIRY_CHEESE             | Cheese         | Dairy              |
+| DAIRY_CREAM              | Cream          | Dairy              |
+| DAIRY_YOGURT             | Yogurt         | Dairy              |
+| DAIRY_ICE_CREAM          | Ice cream      | Dairy              |
+| DAIRY_GHEE               | Ghee           | Dairy              |
+| DAIRY_MILK_POWDER        | Milk powder    | Dairy              |
+| DAIRY_COTTAGE_CHEESE     | Cottage cheese | Dairy              |
+| DAIRY_SOUR_CREAM         | Sour cream     | Dairy              |
+| DAIRY_BUTTERMILK         | Buttermilk     | Dairy              |
+| DAIRY_KEFIR              | Kefir          | Dairy              |
+| DAIRY_LACTALBUMIN        | Lactalbumin    | Dairy              |
+| EGGS_CHICKEN             | Chicken eggs   | Eggs               |
+| EGGS_DUCK                | Duck eggs      | Eggs               |
+| EGGS_QUAIL               | Quail eggs     | Eggs               |
+| EGGS_GOOSE               | Goose eggs     | Eggs               |
+| EGGS_TURKEY              | Turkey eggs    | Eggs               |
+| EGGS_WHITES              | Egg whites     | Eggs               |
+| EGGS_YOLKS               | Egg yolks      | Eggs               |
+| EGGS_POWDER              | Egg powder     | Eggs               |
+| EGGS_LECITHIN            | Egg lecithin   | Eggs               |
+| EGGS_PROTEINS            | Egg proteins   | Eggs               |
+| EGGS_ALBUMIN             | Albumin        | Eggs               |
+| EGGS_GLOBULIN            | Globulin       | Eggs               |
+| EGGS_LIVETIN             | Livetin        | Eggs               |
+| EGGS_OVOMUCOID           | Ovomucoid      | Eggs               |
+| EGGS_OVALBUMIN           | Ovalbumin      | Eggs               |
+| TREE_NUTS_ALMONDS        | Almonds        | Tree Nuts          |
+| TREE_NUTS_BRAZIL         | Brazil nuts    | Tree Nuts          |
+| TREE_NUTS_CASHEWS        | Cashews        | Tree Nuts          |
+| TREE_NUTS_HAZELNUTS      | Hazelnuts      | Tree Nuts          |
+| TREE_NUTS_MACADAMIA      | Macadamia nuts | Tree Nuts          |
+| TREE_NUTS_PECANS         | Pecans         | Tree Nuts          |
+| TREE_NUTS_PINE           | Pine nuts      | Tree Nuts          |
+| TREE_NUTS_PISTACHIOS     | Pistachios     | Tree Nuts          |
+| TREE_NUTS_WALNUTS        | Walnuts        | Tree Nuts          |
+| TREE_NUTS_SHEA           | Shea nuts      | Tree Nuts          |
+| TREE_NUTS_COCONUT        | Coconut        | Tree Nuts          |
+| TREE_NUTS_CHESTNUTS      | Chestnuts      | Tree Nuts          |
+| TREE_NUTS_HICKORY        | Hickory nuts   | Tree Nuts          |
+| TREE_NUTS_BEECH          | Beechnuts      | Tree Nuts          |
+| TREE_NUTS_GINKGO         | Ginkgo nuts    | Tree Nuts          |
+| TREE_NUTS_LYCHEE         | Lychee nuts    | Tree Nuts          |
+| TREE_NUTS_PILI           | Pili nuts      | Tree Nuts          |
+| TREE_NUTS_CANDLE         | Candle nuts    | Tree Nuts          |
+| TREE_NUTS_KOLA           | Kola nuts      | Tree Nuts          |
+| TREE_NUTS_PARADISE       | Paradise nuts  | Tree Nuts          |
+| PEANUTS_WHOLE            | Peanuts        | Peanuts            |
+| PEANUTS_OIL              | Peanut oil     | Peanuts            |
+| PEANUTS_FLOUR            | Peanut flour   | Peanuts            |
+| PEANUTS_BUTTER           | Peanut butter  | Peanuts            |
+| PEANUTS_PROTEIN          | Peanut protein | Peanuts            |
+| PEANUTS_ARACHIS_OIL      | Arachis oil    | Peanuts            |
+| PEANUTS_BEER_NUTS        | Beer nuts      | Peanuts            |
+| PEANUTS_MIXED            | Mixed nuts     | Peanuts            |
+| PEANUTS_NUT_MEAT         | Nut meat       | Peanuts            |
+| PEANUTS_GROUND           | Ground nuts    | Peanuts            |
+| PEANUTS_MONKEY           | Monkey nuts    | Peanuts            |
+| PEANUTS_MANDELONAS       | Mandelonas     | Peanuts            |
+| PEANUTS_NU_NUTS          | Nu-Nuts        | Peanuts            |
+| PEANUTS_SPROUTS          | Peanut sprouts | Peanuts            |
+| SOY_SOYBEANS             | Soybeans       | Soy                |
+| SOY_SAUCE                | Soy sauce      | Soy                |
+| SOY_TOFU                 | Tofu           | Soy                |
+| SOY_TEMPEH               | Tempeh         | Soy                |
+| SOY_MISO                 | Miso           | Soy                |
+| SOY_NATTO                | Natto          | Soy                |
+| SOY_EDAMAME              | Edamame        | Soy                |
+| SOY_LECITHIN             | Soy lecithin   | Soy                |
+| SOY_PROTEIN              | Soy protein    | Soy                |
+| SOY_FLOUR                | Soy flour      | Soy                |
+| SOY_MILK                 | Soy milk       | Soy                |
+| SOY_NUTS                 | Soy nuts       | Soy                |
+| SOY_SPROUTS              | Soy sprouts    | Soy                |
+| SOY_TVP                  | Textured vegetable protein | Soy |
+| SOY_HVP                  | Hydrolyzed vegetable protein | Soy |
+| WHEAT_FLOUR              | Wheat flour    | Wheat              |
+| WHEAT_BRAN               | Wheat bran     | Wheat              |
+| WHEAT_GERM               | Wheat germ     | Wheat              |
+| WHEAT_STARCH             | Wheat starch   | Wheat              |
+| WHEAT_PROTEIN            | Wheat protein  | Wheat              |
+| WHEAT_SEMOLINA           | Semolina       | Wheat              |
+| WHEAT_DURUM              | Durum          | Wheat              |
+| WHEAT_KAMUT              | Kamut          | Wheat              |
+| WHEAT_SPELT              | Spelt          | Wheat              |
+| WHEAT_TRITICALE          | Triticale      | Wheat              |
+| WHEAT_VITAL_GLUTEN       | Vital wheat gluten | Wheat         |
+| WHEAT_MODIFIED_STARCH    | Modified wheat starch | Wheat      |
+| WHEAT_GRASS              | Wheat grass    | Wheat              |
+| WHEAT_CRACKED            | Cracked wheat  | Wheat              |
+| WHEAT_BULGUR             | Bulgur         | Wheat              |
+| FISH_SALMON              | Salmon         | Fish               |
+| FISH_TUNA                | Tuna           | Fish               |
+| FISH_COD                 | Cod            | Fish               |
+| FISH_HALIBUT             | Halibut        | Fish               |
+| FISH_MACKEREL            | Mackerel       | Fish               |
+| FISH_TROUT               | Trout          | Fish               |
+| FISH_BASS                | Bass           | Fish               |
+| FISH_FLOUNDER            | Flounder       | Fish               |
+| FISH_SOLE                | Sole           | Fish               |
+| FISH_HADDOCK             | Haddock        | Fish               |
+| FISH_ANCHOVY             | Anchovy        | Fish               |
+| FISH_SARDINES            | Sardines       | Fish               |
+| FISH_TILAPIA             | Tilapia        | Fish               |
+| FISH_MAHI_MAHI           | Mahi mahi      | Fish               |
+| FISH_SWORDFISH           | Swordfish      | Fish               |
+| FISH_PIKE                | Pike           | Fish               |
+| FISH_PERCH       | Perch      | Fish     |
+| FISH_SNAPPER     | Snapper    | Fish     |
+| FISH_GROUPER     | Grouper    | Fish     |
+| FISH_CATFISH     | Catfish    | Fish     |
+| FISH_GELATIN     | Fish gelatin | Fish    |
+| FISH_OIL         | Fish oil   | Fish     |
+| FISH_SAUCE       | Fish sauce | Fish     |
+| FISH_STOCK       | Fish stock | Fish     |
+| FISH_CAVIAR      | Caviar     | Fish     |
+| FISH_ROE         | Roe        | Fish     |
+| SHELLFISH_SHRIMP | Shrimp     | Shellfish |
+| SHELLFISH_CRAB   | Crab       | Shellfish |
+| SHELLFISH_LOBSTER | Lobster   | Shellfish |
+| SHELLFISH_CRAYFISH | Crayfish | Shellfish |
+| SHELLFISH_PRAWNS | Prawns     | Shellfish |
+| SHELLFISH_CLAMS  | Clams      | Shellfish |
+| SHELLFISH_MUSSELS | Mussels   | Shellfish |
+| SHELLFISH_OYSTERS | Oysters   | Shellfish |
+| SHELLFISH_SCALLOPS | Scallops | Shellfish |
+| SHELLFISH_SQUID  | Squid      | Shellfish |
+| SHELLFISH_OCTOPUS | Octopus   | Shellfish |
+| SHELLFISH_ABALONE | Abalone   | Shellfish |
+| SHELLFISH_COCKLES | Cockles   | Shellfish |
+| SHELLFISH_PERIWINKLES | Periwinkles | Shellfish |
+| SHELLFISH_SEA_URCHIN | Sea urchin | Shellfish |
+| SHELLFISH_BARNACLES | Barnacles | Shellfish |
+| SHELLFISH_CRAWFISH | Crawfish | Shellfish |
+| SHELLFISH_LANGOUSTINES | Langoustines | Shellfish |
+| SHELLFISH_WHELKS | Whelks    | Shellfish |
+| SESAME_SEEDS              | Sesame seeds          | Sesame            |
+| SESAME_OIL               | Sesame oil            | Sesame            |
+| SESAME_TAHINI            | Tahini                | Sesame            |
+| SESAME_SESAMOL           | Sesamol               | Sesame            |
+| SESAME_FLOUR             | Sesame flour          | Sesame            |
+| SESAME_PASTE             | Sesame paste          | Sesame            |
+| SESAME_GINGELLY_OIL      | Gingelly oil          | Sesame            |
+| SESAME_BENNE             | Benne seeds           | Sesame            |
+| SESAME_SALT              | Sesame salt           | Sesame            |
+| SESAME_AQUA_LIBRA        | Aqua libra            | Sesame            |
+| SESAME_SPROUTS           | Sesame sprouts        | Sesame            |
+| FRUITS_APPLES            | Apples                | Fruits            |
+| FRUITS_PEARS             | Pears                 | Fruits            |
+| FRUITS_CHERRIES          | Cherries              | Fruits            |
+| FRUITS_PEACHES           | Peaches               | Fruits            |
+| FRUITS_PLUMS             | Plums                 | Fruits            |
+| FRUITS_APRICOTS          | Apricots              | Fruits            |
+| FRUITS_NECTARINES        | Nectarines            | Fruits            |
+| FRUITS_STRAWBERRIES      | Strawberries          | Fruits            |
+| FRUITS_RASPBERRIES       | Raspberries           | Fruits            |
+| FRUITS_BLACKBERRIES      | Blackberries          | Fruits            |
+| FRUITS_BLUEBERRIES       | Blueberries           | Fruits            |
+| FRUITS_GRAPES            | Grapes                | Fruits            |
+| FRUITS_BANANAS           | Bananas               | Fruits            |
+| FRUITS_KIWI              | Kiwi                  | Fruits            |
+| FRUITS_MANGO             | Mango                 | Fruits            |
+| FRUITS_PINEAPPLE         | Pineapple             | Fruits            |
+| FRUITS_PAPAYA            | Papaya                | Fruits            |
+| FRUITS_FIGS              | Figs                  | Fruits            |
+| FRUITS_DATES             | Dates                 | Fruits            |
+| FRUITS_POMEGRANATE       | Pomegranate           | Fruits            |
+| FRUITS_LYCHEE            | Lychee                | Fruits            |
+| FRUITS_DRAGON_FRUIT      | Dragon fruit          | Fruits            |
+| FRUITS_PASSION_FRUIT     | Passion fruit         | Fruits            |
+| FRUITS_GUAVA             | Guava                 | Fruits            |
+| FRUITS_PERSIMMON         | Persimmon             | Fruits            |
+| FRUITS_AVOCADO           | Avocado               | Fruits            |
+| FRUITS_ORANGES           | Oranges               | Fruits            |
+| FRUITS_LEMONS            | Lemons                | Fruits            |
+| FRUITS_LIMES             | Limes                 | Fruits            |
+| FRUITS_GRAPEFRUIT        | Grapefruit            | Fruits            |
+| FRUITS_TANGERINES        | Tangerines            | Fruits            |
+| FRUITS_CLEMENTINES       | Clementines           | Fruits            |
+| FRUITS_KUMQUATS          | Kumquats              | Fruits            |
+| VEGETABLES_CELERY        | Celery                | Vegetables        |
+| VEGETABLES_CARROTS       | Carrots               | Vegetables        |
+| VEGETABLES_PARSNIPS      | Parsnips              | Vegetables        |
+| VEGETABLES_TURNIPS       | Turnips               | Vegetables        |
+| VEGETABLES_RUTABAGA      | Rutabaga              | Vegetables        |
+| VEGETABLES_BEETS         | Beets                 | Vegetables        |
+| VEGETABLES_RADISHES      | Radishes              | Vegetables        |
+| VEGETABLES_POTATOES      | Potatoes              | Vegetables        |
+| VEGETABLES_SWEET_POTATOES| Sweet potatoes        | Vegetables        |
+| VEGETABLES_YAMS          | Yams                  | Vegetables        |
+| VEGETABLES_ONIONS        | Onions                | Vegetables        |
+| VEGETABLES_GARLIC        | Garlic                | Vegetables        |
+| VEGETABLES_LEEKS         | Leeks                 | Vegetables        |
+| VEGETABLES_SHALLOTS      | Shallots              | Vegetables        |
+| VEGETABLES_CHIVES        | Chives                | Vegetables        |
+| VEGETABLES_ASPARAGUS     | Asparagus             | Vegetables        |
+| VEGETABLES_BROCCOLI      | Broccoli              | Vegetables        |
+| VEGETABLES_CAULIFLOWER   | Cauliflower           | Vegetables        |
+| VEGETABLES_BRUSSELS_SPROUTS | Brussels sprouts   | Vegetables        |
+| VEGETABLES_CABBAGE       | Cabbage               | Vegetables        |
+| VEGETABLES_KALE          | Kale                  | Vegetables        |
+| VEGETABLES_COLLARD_GREENS| Collard greens        | Vegetables        |
+| VEGETABLES_SPINACH       | Spinach               | Vegetables        |
+| VEGETABLES_SWISS_CHARD   | Swiss chard           | Vegetables        |
+| VEGETABLES_LETTUCE       | Lettuce               | Vegetables        |
+| VEGETABLES_ARUGULA       | Arugula               | Vegetables        |
+| VEGETABLES_WATERCRESS    | Watercress            | Vegetables        |
+| VEGETABLES_MUSHROOMS     | Mushrooms             | Vegetables        |
+| VEGETABLES_TOMATOES      | Tomatoes              | Vegetables        |
+| VEGETABLES_PEPPERS       | Peppers               | Vegetables        |
+| VEGETABLES_EGGPLANT      | Eggplant              | Vegetables        |
+| VEGETABLES_ZUCCHINI      | Zucchini              | Vegetables        |
+| VEGETABLE_CUCUMBER       | Cucumber              | Vegetables        |
+| VEGETABLE_PUMPKIN        | Pumpkin               | Vegetables        |
+| VEGETABLE_SQUASH         | Squash                | Vegetables        |
+| VEGETABLE_ARTICHOKES     | Artichokes            | Vegetables        |
+| VEGETABLE_BAMBOO_SHOOTS  | Bamboo shoots         | Vegetables        |
+| VEGETABLE_BEAN_SPROUTS   | Bean sprouts          | Vegetables        |
+| VEGETABLE_CORN           | Corn                  | Vegetables        |
+| VEGETABLE_GREEN_BEANS    | Green beans           | Vegetables        |
+| VEGETABLE_PEAS           | Peas                  | Vegetables        |
+| VEGETABLE_JICAMA         | Jicama                | Vegetables        |
+| VEGETABLE_KOHLRABI       | Kohlrabi              | Vegetables        |
+| VEGETABLE_OKRA           | Okra                  | Vegetables        |
+| LEGUME_BLACK_BEANS         | Black beans          | Legumes           |
+| LEGUME_KIDNEY_BEANS        | Kidney beans         | Legumes           |
+| LEGUME_NAVY_BEANS          | Navy beans           | Legumes           |
+| LEGUME_PINTO_BEANS         | Pinto beans          | Legumes           |
+| LEGUME_WHITE_BEANS         | White beans          | Legumes           |
+| LEGUME_LIMA_BEANS          | Lima beans           | Legumes           |
+| LEGUME_FAVA_BEANS          | Fava beans           | Legumes           |
+| LEGUME_CHICKPEAS           | Chickpeas            | Legumes           |
+| LEGUME_LENTILS             | Lentils              | Legumes           |
+| LEGUME_SPLIT_PEAS          | Split peas           | Legumes           |
+| LEGUME_MUNG_BEANS          | Mung beans           | Legumes           |
+| LEGUME_ADZUKI_BEANS        | Adzuki beans         | Legumes           |
+| LEGUME_BLACK_EYED_PEAS     | Black-eyed peas      | Legumes           |
+| LEGUME_CANNELLINI_BEANS    | Cannellini beans     | Legumes           |
+| LEGUME_GREAT_NORTHERN_BEANS| Great Northern beans | Legumes           |
+| LEGUME_LUPINI_BEANS        | Lupini beans         | Legumes           |
+| LEGUME_SOYBEANS            | Soybeans             | Legumes           |
+| LEGUME_GREEN_PEAS          | Green peas           | Legumes           |
+| LEGUME_SNOW_PEAS           | Snow peas            | Legumes           |
+| LEGUME_SUGAR_SNAP_PEAS     | Sugar snap peas      | Legumes           |
+| GRAIN_BARLEY               | Barley               | Grains            |
+| GRAIN_BUCKWHEAT            | Buckwheat            | Grains            |
+| GRAIN_CORN                 | Corn                 | Grains            |
+| GRAIN_MILLET               | Millet               | Grains            |
+| GRAIN_OATS                 | Oats                 | Grains            |
+| GRAIN_QUINOA               | Quinoa               | Grains            |
+| GRAIN_RICE                 | Rice                 | Grains            |
+| GRAIN_RYE                  | Rye                  | Grains            |
+| GRAIN_SORGHUM              | Sorghum              | Grains            |
+| GRAIN_TEFF                 | Teff                 | Grains            |
+| GRAIN_WILD_RICE            | Wild rice            | Grains            |
+| GRAIN_AMARANTH             | Amaranth             | Grains            |
+| GRAIN_FARRO                | Farro                | Grains            |
+| GRAIN_FREEKEH              | Freekeh              | Grains            |
+| GRAIN_JOBS_TEARS           | Job's tears          | Grains            |
+| GRAIN_KANIWA               | Kaniwa               | Grains            |
+| GRAIN_EINKORN              | Einkorn              | Grains            |
+| GRAIN_EMMER                | Emmer                | Grains            |
+| SEED_SUNFLOWER             | Sunflower seeds      | Seeds             |
+| SEED_PUMPKIN               | Pumpkin seeds        | Seeds             |
+| SEED_FLAX                  | Flax seeds           | Seeds             |
+| SEED_CHIA                  | Chia seeds           | Seeds             |
+| SEED_HEMP                  | Hemp seeds           | Seeds             |
+| SEED_POPPY                 | Poppy seeds          | Seeds             |
+| SEED_CARAWAY               | Caraway seeds        | Seeds             |
+| SEED_FENNEL                | Fennel seeds         | Seeds             |
+| SEED_MUSTARD               | Mustard seeds        | Seeds             |
+| SEED_CUMIN                 | Cumin seeds          | Seeds             |
+| SEED_CORIANDER             | Coriander seeds      | Seeds             |
+| SEED_CELERY                | Celery seeds         | Seeds             |
+| SEED_ANISE                 | Anise seeds          | Seeds             |
+| SEED_NIGELLA               | Nigella seeds        | Seeds             |
+| SEED_FENUGREEK             | Fenugreek seeds      | Seeds             |
+| SPICE_BLACK_PEPPER         | Black pepper         | Spices and Herbs  |
+| SPICE_WHITE_PEPPER         | White pepper         | Spices and Herbs  |
+| SPICE_RED_PEPPER           | Red pepper           | Spices and Herbs  |
+| SPICE_CHILI_POWDER         | Chili powder         | Spices and Herbs  |
+| SPICE_PAPRIKA              | Paprika              | Spices and Herbs  |
+| SPICE_CINNAMON             | Cinnamon             | Spices and Herbs  |
+| SPICE_CLOVES               | Cloves               | Spices and Herbs  |
+| SPICE_NUTMEG               | Nutmeg               | Spices and Herbs  |
+| SPICE_MACE                 | Mace                 | Spices and Herbs  |
+| SPICE_GINGER               | Ginger               | Spices and Herbs  |
+| SPICE_TURMERIC             | Turmeric             | Spices and Herbs  |
+| SPICE_CARDAMOM             | Cardamom             | Spices and Herbs  |
+| SPICE_CORIANDER            | Coriander            | Spices and Herbs  |
+| SPICE_CUMIN                | Cumin                | Spices and Herbs  |
+| SPICE_FENNEL               | Fennel               | Spices and Herbs  |
+| SPICE_FENUGREEK            | Fenugreek            | Spices and Herbs  |
+| SPICE_GARLIC_POWDER        | Garlic powder        | Spices and Herbs  |
+| SPICE_ONION_POWDER         | Onion powder         | Spices and Herbs  |
+| SPICE_MUSTARD_POWDER       | Mustard powder       | Spices and Herbs  |
+| SPICE_SAFFRON              | Saffron              | Spices and Herbs  |
+| HERB_BASIL                 | Basil                | Spices and Herbs  |
+| HERB_OREGANO               | Oregano              | Spices and Herbs  |
+| HERB_THYME                 | Thyme                | Spices and Herbs  |
+| HERB_ROSEMARY              | Rosemary             | Spices and Herbs  |
+| HERB_SAGE                  | Sage                 | Spices and Herbs  |
+| HERB_MARJORAM              | Marjoram             | Spices and Herbs  |
+| HERB_TARRAGON              | Tarragon             | Spices and Herbs  |
+| HERB_DILL                  | Dill                 | Spices and Herbs  |
+| HERB_MINT                  | Mint                 | Spices and Herbs  |
+| HERB_PARSLEY               | Parsley              | Spices and Herbs  |
+| HERB_CILANTRO              | Cilantro             | Spices and Herbs  |
+| HERB_BAY_LEAVES            | Bay leaves           | Spices and Herbs  |
+| SPICE_CARAWAY              | Caraway              | Spices and Herbs  |
+| SPICE_JUNIPER_BERRIES      | Juniper berries      | Spices and Herbs  |
+| SPICE_WASABI               | Wasabi               | Spices and Herbs  |
+| SPICE_HORSERADISH          | Horseradish          | Spices and Herbs  |
+| ADDITIVE_MSG               | MSG                  | Additives         |
+| ADDITIVE_SULFITES          | Sulfites             | Additives         |
+| ADDITIVE_NITRATES          | Nitrates             | Additives         |
+| ADDITIVE_NITRITES          | Nitrites             | Additives         |
+| ADDITIVE_BHA               | BHA                  | Additives         |
+| ADDITIVE_BHT               | BHT                  | Additives         |
+| ADDITIVE_CARRAGEENAN       | Carrageenan          | Additives         |
+| ADDITIVE_ANNATTO           | Annatto              | Additives         |
+| ADDITIVE_TARTRAZINE        | Tartrazine           | Additives         |
+| ADDITIVE_RED_DYE_40        | Red dye 40           | Additives         |
+| ADDITIVE_YELLOW_DYE_5      | Yellow dye 5         | Additives         |
+| ADDITIVE_YELLOW_DYE_6      | Yellow dye 6         | Additives         |
+| ADDITIVE_BLUE_DYE_1        | Blue dye 1           | Additives         |
+| ADDITIVE_ASPARTAME         | Aspartame            | Additives         |
+| ADDITIVE_SUCRALOSE         | Sucralose            | Additives         |
+| ADDITIVE_SACCHARIN         | Saccharin            | Additives         |
+| ADDITIVE_STEVIA            | Stevia               | Additives         |
+| ADDITIVE_ACESULFAME_K      | Acesulfame potassium | Additives         |
+| ADDITIVE_GUAR_GUM          | Guar gum             | Additives         |
+| ADDITIVE_XANTHAN_GUM       | Xanthan gum          | Additives         |
+| ADDITIVE_CARBOXYMETHYL_CELLULOSE | Carboxymethyl cellulose | Additives |
+| ADDITIVE_MALTODEXTRIN      | Maltodextrin         | Additives         |
+| ADDITIVE_MODIFIED_FOOD_STARCH | Modified food starch | Additives      |
+| ADDITIVES_SODIUM_BENZOATE     | Sodium benzoate           | Additives         |
+| ADDITIVES_POTASSIUM_SORBATE   | Potassium sorbate         | Additives         |
+| ADDITIVES_PROPYLENE_GLYCOL    | Propylene glycol          | Additives         |
+| ADDITIVES_POLYSORBATES        | Polysorbates              | Additives         |
+| ADDITIVES_SODIUM_NITRATE      | Sodium nitrate            | Additives         |
+| ADDITIVES_CALCIUM_PROPIONATE  | Calcium propionate        | Additives         |
+| ADDITIVES_PHOSPHORIC_ACID     | Phosphoric acid           | Additives         |
+| OTHERS_YEAST                  | Yeast                     | Others            |
+| OTHERS_GELATIN                | Gelatin                   | Others            |
+| OTHERS_CARMINE                | Carmine                   | Others            |
+| OTHERS_COCHINEAL_EXTRACT      | Cochineal extract         | Others            |
+| OTHERS_ROYAL_JELLY            | Royal jelly               | Others            |
+| OTHERS_PROPOLIS               | Propolis                  | Others            |
+| OTHERS_BEE_POLLEN             | Bee pollen                | Others            |
+| OTHERS_HONEY                  | Honey                     | Others            |
+| OTHERS_LATEX_FRUITS           | Latex fruits              | Others            |
+| OTHERS_ALPHA_GAL              | Alpha-gal (meat allergy)  | Others            |
+| OTHERS_FOOD_ENZYMES           | Food enzymes              | Others            |
+| OTHERS_LUPIN                  | Lupin                     | Others            |
+| OTHERS_MOLLUSKS               | Mollusks                  | Others            |
+| OTHERS_BUCKWHEAT              | Buckwheat                 | Others            |
+| OTHERS_MARSHMALLOW_ROOT       | Marshmallow root          | Others            |
+| OTHERS_CHICORY_ROOT           | Chicory root              | Others            |
+| OTHERS_TRAGACANTH             | Tragacanth                | Others            |
+| OTHERS_ACACIA_GUM             | Acacia gum                | Others            |
+| OTHERS_CAROB                  | Carob                     | Others            |
+| OTHERS_MESQUITE               | Mesquite                  | Others            |
+
+
+# ----------- WIP below
 
 
 # ----- B2B
-
-
-
-`GET http://example.com/api/kittens`
-
-### Query Parameters
-
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
-
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-
-## Get a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
-}
-```
-
-This endpoint retrieves a specific kitten.
-
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>

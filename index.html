@@ -513,10 +513,15 @@
               </ul>
           </li>
           <li>
-            <a href="#wip-below" class="toc-h1 toc-link" data-title="----------- WIP below">----------- WIP below</a>
+            <a href="#b2b" class="toc-h1 toc-link" data-title="----- B2B">----- B2B</a>
           </li>
           <li>
-            <a href="#b2b" class="toc-h1 toc-link" data-title="----- B2B">----- B2B</a>
+            <a href="#account-2" class="toc-h1 toc-link" data-title="Account">Account</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#create-a-new-user-into-our-database" class="toc-h2 toc-link" data-title="Create a new user into our database">Create a new user into our database</a>
+                  </li>
+              </ul>
           </li>
           <li>
             <a href="#errors" class="toc-h1 toc-link" data-title="Errors">Errors</a>
@@ -5849,7 +5854,121 @@ Note that it is purely going by recipe_hist_id. The user-specificity is enforced
 <td>Others</td>
 </tr>
 </tbody></table>
-<h1 id='wip-below'>----------- WIP below</h1><h1 id='b2b'>----- B2B</h1><h1 id='errors'>Errors</h1>
+<h1 id='b2b'>----- B2B</h1><h1 id='account-2'>Account</h1><h2 id='create-a-new-user-into-our-database'>Create a new user into our database</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">InsertProvider</span><span class="p">(</span><span class="w">
+  </span><span class="nv">$uid</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w">
+  </span><span class="nv">$email</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$first_name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$middle_name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">=</span><span class="s2">""</span><span class="p">,</span><span class="w">
+  </span><span class="nv">$last_name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w">
+  </span><span class="nv">$npi</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!</span><span class="w">
+  </span><span class="nv">$provider_type</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$designation</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$org_name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$seat_limit</span><span class="p">:</span><span class="w"> </span><span class="nb">Int</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+  </span><span class="nv">$patient_limit</span><span class="p">:</span><span class="w"> </span><span class="nb">Int</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">10</span><span class="w">
+</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">insert_provider</span><span class="p">(</span><span class="n">objects</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">uid</span><span class="p">:</span><span class="w"> </span><span class="nv">$uid</span><span class="p">,</span><span class="w">
+    </span><span class="n">email</span><span class="p">:</span><span class="w"> </span><span class="nv">$email</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">first_name</span><span class="p">:</span><span class="w"> </span><span class="nv">$first_name</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">middle_name</span><span class="p">:</span><span class="w"> </span><span class="nv">$middle_name</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">last_name</span><span class="p">:</span><span class="w"> </span><span class="nv">$last_name</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">npi</span><span class="p">:</span><span class="w"> </span><span class="nv">$npi</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">provider_type</span><span class="p">:</span><span class="w"> </span><span class="nv">$provider_type</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">designation</span><span class="p">:</span><span class="w"> </span><span class="nv">$designation</span><span class="p">,</span><span class="w">
+    </span><span class="n">provider_org</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">data</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="n">org_name</span><span class="p">:</span><span class="w"> </span><span class="nv">$org_name</span><span class="p">,</span><span class="w"> 
+        </span><span class="n">patient_limit</span><span class="p">:</span><span class="w"> </span><span class="nv">$patient_limit</span><span class="p">,</span><span class="w"> 
+        </span><span class="n">seat_limit</span><span class="p">:</span><span class="w"> </span><span class="nv">$seat_limit</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">})</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">affected_rows</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">uid</span><span class="err">":"</span><span class="n">testuid</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">email</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">kyungha329</span><span class="k">@gmail</span><span class="err">.</span><span class="n">com</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">first_name</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Kay</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">middle_name</span><span class="err">":</span><span class="w"> </span><span class="err">""</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">last_name</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Lim</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">npi</span><span class="err">":</span><span class="w"> </span><span class="err">"0000012345"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">provider_type</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">founder</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">designation</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Dr</span><span class="err">."</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">org_name</span><span class="err">":"</span><span class="n">Kay</span><span class="w"> </span><span class="n">Lim</span><span class="w"> </span><span class="n">LLC</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">patient_limit</span><span class="err">":</span><span class="w"> </span><span class="err">10</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">seat_limit</span><span class="err">":</span><span class="w"> </span><span class="err">2</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='parameters-31'>Parameters:</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>uid</td>
+<td>text</td>
+<td>User ID provided by Cognito</td>
+</tr>
+<tr>
+<td>email</td>
+<td>text</td>
+<td>Work email</td>
+</tr>
+<tr>
+<td>first_name</td>
+<td>text</td>
+<td>First name</td>
+</tr>
+<tr>
+<td>middle_name</td>
+<td>text</td>
+<td>Middle name. Enter empty string if no middle name</td>
+</tr>
+<tr>
+<td>last_name</td>
+<td>text</td>
+<td>Last name</td>
+</tr>
+<tr>
+<td>npi</td>
+<td>text</td>
+<td>10 digit NPI number, verified through NIH API</td>
+</tr>
+<tr>
+<td>provider_type</td>
+<td>text</td>
+<td>Provider Type registered and verified through NIH API</td>
+</tr>
+<tr>
+<td>designation</td>
+<td>text</td>
+<td>Open field. Dr, RDN, etc... for providers to enter</td>
+</tr>
+<tr>
+<td>org_name</td>
+<td>text</td>
+<td>Organization name. Tell the user to enter their own name if they don&#39;t have a registered business entity</td>
+</tr>
+<tr>
+<td>seat_limit</td>
+<td>integer</td>
+<td>seat limit provided in the paid plan</td>
+</tr>
+<tr>
+<td>patient_limit</td>
+<td>integer</td>
+<td>patient number limit provided in the paid plan</td>
+</tr>
+</tbody></table>
+<h1 id='errors'>Errors</h1>
 <aside class="notice">
 This error section is stored in a separate file in <code>includes/_errors.md</code>. Slate allows you to optionally separate out your docs into many files...just save them to the <code>includes</code> folder and add them to the top of your <code>index.md</code>'s frontmatter. Files are included in the order listed.
 </aside>

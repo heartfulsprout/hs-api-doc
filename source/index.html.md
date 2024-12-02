@@ -3282,7 +3282,80 @@ LACTOSE_INTOLERANT | Lactose-intolerant
 | OTHERS_MESQUITE               | Mesquite                  | Others            |
 
 
-# ----------- WIP below
-
 
 # ----- B2B
+
+# Account
+
+## Create a new user into our database
+
+```graphql
+mutation InsertProvider(
+  $uid: String!,
+  $email: String!, 
+  $first_name: String!, 
+  $middle_name: String="",
+  $last_name: String!,
+  $npi: String!
+  $provider_type: String!, 
+  $designation: String = "", 
+  $org_name: String = "", 
+  $seat_limit: Int = 2,
+  $patient_limit: Int = 10
+) {
+  insert_provider(objects: {
+    uid: $uid,
+    email: $email, 
+    first_name: $first_name, 
+    middle_name: $middle_name, 
+    last_name: $last_name, 
+    npi: $npi, 
+    provider_type: $provider_type, 
+    designation: $designation,
+    provider_org: {
+      data: {
+        org_name: $org_name, 
+        patient_limit: $patient_limit, 
+        seat_limit: $seat_limit
+      }
+    }
+  }) {
+    affected_rows
+  }
+}
+```
+
+> Example input parameter:
+
+```graphql
+{
+  "uid":"testuid",
+  "email": "kyungha329@gmail.com",
+  "first_name": "Kay",
+  "middle_name": "",
+  "last_name": "Lim",
+  "npi": "0000012345",
+  "provider_type": "founder",
+  "designation": "Dr.",
+  "org_name":"Kay Lim LLC",
+  "patient_limit": 10,
+  "seat_limit": 2
+}
+```
+
+### Parameters:
+
+Parameter         | Type        | Description
+----------------- | ----------- | -----------
+uid               | text        | User ID provided by Cognito
+email             | text        | Work email
+first_name        | text        | First name
+middle_name       | text        | Middle name. Enter empty string if no middle name
+last_name         | text        | Last name
+npi               | text        | 10 digit NPI number, verified through NIH API
+provider_type     | text        | Provider Type registered and verified through NIH API
+designation       | text        | Open field. Dr, RDN, etc... for providers to enter
+org_name          | text        | Organization name. Tell the user to enter their own name if they don't have a registered business entity
+seat_limit        | integer     | seat limit provided in the paid plan
+patient_limit     | integer     | patient number limit provided in the paid plan
+

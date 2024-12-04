@@ -519,9 +519,18 @@
             <a href="#account-2" class="toc-h1 toc-link" data-title="Account">Account</a>
               <ul class="toc-list-h2">
                   <li>
-                    <a href="#create-a-new-user-into-our-database" class="toc-h2 toc-link" data-title="Create a new user into our database">Create a new user into our database</a>
+                    <a href="#create-a-new-provider-into-our-database" class="toc-h2 toc-link" data-title="Create a new provider into our database">Create a new provider into our database</a>
+                  </li>
+                  <li>
+                    <a href="#select-a-plan" class="toc-h2 toc-link" data-title="Select a plan">Select a plan</a>
+                  </li>
+                  <li>
+                    <a href="#cancel-a-plan" class="toc-h2 toc-link" data-title="Cancel a plan">Cancel a plan</a>
                   </li>
               </ul>
+          </li>
+          <li>
+            <a href="#done" class="toc-h1 toc-link" data-title="----- DONE">----- DONE</a>
           </li>
           <li>
             <a href="#errors" class="toc-h1 toc-link" data-title="Errors">Errors</a>
@@ -5854,7 +5863,7 @@ Note that it is purely going by recipe_hist_id. The user-specificity is enforced
 <td>Others</td>
 </tr>
 </tbody></table>
-<h1 id='b2b'>----- B2B</h1><h1 id='account-2'>Account</h1><h2 id='create-a-new-user-into-our-database'>Create a new user into our database</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">InsertProvider</span><span class="p">(</span><span class="w">
+<h1 id='b2b'>----- B2B</h1><h1 id='account-2'>Account</h1><h2 id='create-a-new-provider-into-our-database'>Create a new provider into our database</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">InsertProvider</span><span class="p">(</span><span class="w">
   </span><span class="nv">$uid</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w">
   </span><span class="nv">$email</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
   </span><span class="nv">$first_name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
@@ -5863,9 +5872,7 @@ Note that it is purely going by recipe_hist_id. The user-specificity is enforced
   </span><span class="nv">$npi</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!</span><span class="w">
   </span><span class="nv">$provider_type</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
   </span><span class="nv">$designation</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> 
-  </span><span class="nv">$org_name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> 
-  </span><span class="nv">$seat_limit</span><span class="p">:</span><span class="w"> </span><span class="nb">Int</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
-  </span><span class="nv">$patient_limit</span><span class="p">:</span><span class="w"> </span><span class="nb">Int</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">10</span><span class="w">
+  </span><span class="nv">$org_name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="w">
 </span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="n">insert_provider</span><span class="p">(</span><span class="n">objects</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="n">uid</span><span class="p">:</span><span class="w"> </span><span class="nv">$uid</span><span class="p">,</span><span class="w">
@@ -5878,13 +5885,13 @@ Note that it is purely going by recipe_hist_id. The user-specificity is enforced
     </span><span class="n">designation</span><span class="p">:</span><span class="w"> </span><span class="nv">$designation</span><span class="p">,</span><span class="w">
     </span><span class="n">provider_org</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
       </span><span class="n">data</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="n">org_name</span><span class="p">:</span><span class="w"> </span><span class="nv">$org_name</span><span class="p">,</span><span class="w"> 
-        </span><span class="n">patient_limit</span><span class="p">:</span><span class="w"> </span><span class="nv">$patient_limit</span><span class="p">,</span><span class="w"> 
-        </span><span class="n">seat_limit</span><span class="p">:</span><span class="w"> </span><span class="nv">$seat_limit</span><span class="w">
+        </span><span class="n">org_name</span><span class="p">:</span><span class="w"> </span><span class="nv">$org_name</span><span class="w">
       </span><span class="p">}</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">})</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="n">affected_rows</span><span class="w">
+    </span><span class="n">returning</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">id</span><span class="w">
+    </span><span class="p">}</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
@@ -5900,9 +5907,7 @@ Note that it is purely going by recipe_hist_id. The user-specificity is enforced
   </span><span class="err">"</span><span class="n">npi</span><span class="err">":</span><span class="w"> </span><span class="err">"0000012345"</span><span class="p">,</span><span class="w">
   </span><span class="err">"</span><span class="n">provider_type</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">founder</span><span class="err">"</span><span class="p">,</span><span class="w">
   </span><span class="err">"</span><span class="n">designation</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Dr</span><span class="err">."</span><span class="p">,</span><span class="w">
-  </span><span class="err">"</span><span class="n">org_name</span><span class="err">":"</span><span class="n">Kay</span><span class="w"> </span><span class="n">Lim</span><span class="w"> </span><span class="n">LLC</span><span class="err">"</span><span class="p">,</span><span class="w">
-  </span><span class="err">"</span><span class="n">patient_limit</span><span class="err">":</span><span class="w"> </span><span class="err">10</span><span class="p">,</span><span class="w">
-  </span><span class="err">"</span><span class="n">seat_limit</span><span class="err">":</span><span class="w"> </span><span class="err">2</span><span class="w">
+  </span><span class="err">"</span><span class="n">org_name</span><span class="err">":"</span><span class="n">Kay</span><span class="w"> </span><span class="n">Lim</span><span class="w"> </span><span class="n">LLC</span><span class="err">"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div><h3 id='parameters-31'>Parameters:</h3>
 <table><thead>
@@ -5957,18 +5962,116 @@ Note that it is purely going by recipe_hist_id. The user-specificity is enforced
 <td>text</td>
 <td>Organization name. Tell the user to enter their own name if they don&#39;t have a registered business entity</td>
 </tr>
+</tbody></table>
+
+<p>Make sure to store the output ID so that we can save the plan that the provider chooses in the next step.</p>
+
+<aside class="warning">
+The email ID should be unique. If it returns unique violation error, show a warning that this account already exists with the email. Use another email address or log in with the existing account.
+</aside>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="err">Example</span><span class="w"> </span><span class="err">error</span><span class="w"> </span><span class="err">format.</span><span class="w"> </span><span class="err">Please</span><span class="w"> </span><span class="err">check</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">error</span><span class="w"> </span><span class="err">format</span><span class="w"> </span><span class="err">directly</span><span class="w"> </span><span class="err">in</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">code.</span><span class="w">
+
+</span><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">errors</span><span class="err">":</span><span class="w"> </span><span class="err">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="err">"</span><span class="n">message</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Uniqueness</span><span class="w"> </span><span class="n">violation</span><span class="err">.</span><span class="w"> </span><span class="n">duplicate</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="n">violates</span><span class="w"> </span><span class="n">unique</span><span class="w"> </span><span class="n">constraint</span><span class="w"> </span><span class="err">\"</span><span class="n">provider_email_key</span><span class="err">\""</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">extensions</span><span class="err">":</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="err">"</span><span class="n">path</span><span class="err">":</span><span class="w"> </span><span class="err">"$.</span><span class="n">selectionSet</span><span class="err">.</span><span class="n">insert_provider</span><span class="err">.</span><span class="n">args</span><span class="err">.</span><span class="n">objects</span><span class="err">[0]"</span><span class="p">,</span><span class="w">
+        </span><span class="err">"</span><span class="n">code</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">constraint</span><span class="err">-</span><span class="n">violation</span><span class="err">"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="err">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h2 id='select-a-plan'>Select a plan</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">SelectProviderPlan</span><span class="p">(</span><span class="w">
+  </span><span class="nv">$provider_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$patient_limit</span><span class="p">:</span><span class="w"> </span><span class="nb">Int</span><span class="p">!,</span><span class="w">
+  </span><span class="nv">$seat_limit</span><span class="p">:</span><span class="w"> </span><span class="nb">Int</span><span class="p">!)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">update_provider_org</span><span class="p">(</span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">providers</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$provider_id</span><span class="p">}}</span><span class="w">
+  </span><span class="p">},</span><span class="w"> </span><span class="n">_set</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">patient_limit</span><span class="p">:</span><span class="w"> </span><span class="nv">$patient_limit</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">seat_limit</span><span class="p">:</span><span class="w"> </span><span class="nv">$seat_limit</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">plan_status</span><span class="p">:</span><span class="w"> </span><span class="n">ACTIVE</span><span class="w">
+  </span><span class="p">})</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">affected_rows</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">provider_id</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">da574170</span><span class="err">-684</span><span class="n">f</span><span class="err">-4</span><span class="n">da3</span><span class="err">-</span><span class="n">b399</span><span class="err">-524118</span><span class="n">b43e64</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">patient_limit</span><span class="err">":</span><span class="w"> </span><span class="err">10</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">seat_limit</span><span class="err">":2</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='parameters-32'>Parameters:</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>provider_id</td>
+<td>text</td>
+<td>Provider ID generated by the database (e.g. id from provider table)</td>
+</tr>
 <tr>
 <td>seat_limit</td>
-<td>integer</td>
-<td>seat limit provided in the paid plan</td>
+<td>Integer</td>
+<td>Number of seats in the selected plan that the provider selected</td>
 </tr>
 <tr>
 <td>patient_limit</td>
-<td>integer</td>
-<td>patient number limit provided in the paid plan</td>
+<td>Integer</td>
+<td>Number of patients in the selected plan that the provider selected</td>
 </tr>
 </tbody></table>
-<h1 id='errors'>Errors</h1>
+<h2 id='cancel-a-plan'>Cancel a plan</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">CancelPlan</span><span class="p">(</span><span class="w">
+  </span><span class="nv">$provider_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w">
+  </span><span class="nv">$exp_date</span><span class="p">:</span><span class="w"> </span><span class="n">timestamptz</span><span class="w">
+</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">update_provider_org</span><span class="p">(</span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">providers</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$provider_id</span><span class="p">}}</span><span class="w">
+  </span><span class="p">},</span><span class="w"> </span><span class="n">_set</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">expired_at</span><span class="p">:</span><span class="w"> </span><span class="nv">$exp_date</span><span class="p">,</span><span class="w">
+    </span><span class="n">plan_status</span><span class="p">:</span><span class="w"> </span><span class="n">DEACTIVATED</span><span class="w">
+  </span><span class="p">})</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">affected_rows</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">provider_id</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">da574170</span><span class="err">-684</span><span class="n">f</span><span class="err">-4</span><span class="n">da3</span><span class="err">-</span><span class="n">b399</span><span class="err">-524118</span><span class="n">b43e64</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">exp_date</span><span class="err">":</span><span class="w"> </span><span class="err">"2024-12-03"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='parameters-33'>Parameters:</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>provider_id</td>
+<td>text</td>
+<td>Provider ID generated by the database (e.g. id from provider table)</td>
+</tr>
+<tr>
+<td>exp_date</td>
+<td>Timestamp</td>
+<td>Current plan expiration date</td>
+</tr>
+</tbody></table>
+
+<p>Make a note of the plan status. We are marking DEACTIVATED but the service should be available until the exp_date.</p>
+<h1 id='done'>----- DONE</h1><h1 id='errors'>Errors</h1>
 <aside class="notice">
 This error section is stored in a separate file in <code>includes/_errors.md</code>. Slate allows you to optionally separate out your docs into many files...just save them to the <code>includes</code> folder and add them to the top of your <code>index.md</code>'s frontmatter. Files are included in the order listed.
 </aside>

@@ -3635,6 +3635,7 @@ The output should look like the example on the right. We need all the IDs in the
 ```graphql
 mutation RegisterPatient(
   $id: uuid!, 
+  $provider_patient_id: uuid!,
   $first_name: String!, 
   $middle_name: String = "", 
   $last_name: String!, 
@@ -3652,6 +3653,11 @@ mutation RegisterPatient(
   $source: String = "", 
   $contact_permission: Boolean = false, 
   $primary_care: uuid = null) {
+    update_provider_patient(where:{id: {_eq:$provider_patient_id}}, _set: {patient_id:$id}){
+      returning {
+        id
+      }
+    }
   update_patient(
     where: {id: {_eq: $id}}, 
     _set: {
@@ -3703,7 +3709,8 @@ mutation RegisterPatient(
   "referral_reason": "Picky eating",
   "source": "Social Media",
   "contact_permission": true,
-  "primary_care": null
+  "primary_care": null,
+  "provider_patient_id": "4994955a-9745-4847-a323-848028bff92a"
 }
 
 ```
@@ -4121,3 +4128,89 @@ mutation MealPlanPerscription($objects: [prescription_meal_plan_insert_input!] =
   }]
 }
 ```
+
+# Dashboard
+
+## Get patient list for overview
+```graphql
+query GetPatientList($provider_id: uuid = "") {
+  patient(where: {provider_patients: {provider: {id: {_eq: $provider_id}}}}) {
+    id
+    first_name
+    preferred_name
+    middle_name
+    last_name
+    birthday
+    sex
+    primary_diagnosis
+  }
+}
+```
+
+## Patient Detail
+```graphql
+query GetPatientDetail($patient_id: uuid = "") {
+  patient(where: {id: {_eq: $patient_id}}) {
+    birth_country
+    birthday
+    home_address
+    last_name
+    middle_name
+    patientGuardianByEmergencyContact {
+      first_name
+      last_name
+      home_number
+      mobile_number
+      note
+      relationship
+    }
+    patientGuardianByGuardian2 {
+      first_name
+      last_name
+      note
+      birthday
+      email
+      mobile_number
+      guardian_type
+      gender
+      relationship
+      relationship_status
+      work_hr_per_wk
+      occupation
+    }
+    patient_guardian {
+      address
+      email
+      birthday
+      first_name
+      gender
+      guardian_type
+      last_name
+      mobile_number
+      note
+      occupation
+      relationship
+      relationship_status
+    }
+    preferred_name
+    preferred_pronouns
+    primary_diagnosis
+    referral_reason
+    referred_by
+    sex
+    source
+  }
+}
+
+```
+
+> Example input
+
+```graphql
+{
+  "patient_id": "814eed3d-c6a3-4efe-a392-74ba3f0b59b4"
+}
+```
+
+
+# --- DONE

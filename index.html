@@ -530,7 +530,60 @@
               </ul>
           </li>
           <li>
-            <a href="#done" class="toc-h1 toc-link" data-title="----- DONE">----- DONE</a>
+            <a href="#patient-intake" class="toc-h1 toc-link" data-title="Patient Intake">Patient Intake</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#invite-patient" class="toc-h2 toc-link" data-title="Invite Patient">Invite Patient</a>
+                  </li>
+                  <li>
+                    <a href="#guardian-and-pc-registration" class="toc-h2 toc-link" data-title="Guardian and PC Registration">Guardian and PC Registration</a>
+                  </li>
+                  <li>
+                    <a href="#patient-registration" class="toc-h2 toc-link" data-title="Patient Registration">Patient Registration</a>
+                  </li>
+                  <li>
+                    <a href="#save-registration-file" class="toc-h2 toc-link" data-title="Save Registration File">Save Registration File</a>
+                  </li>
+                  <li>
+                    <a href="#insurance-form" class="toc-h2 toc-link" data-title="Insurance Form">Insurance Form</a>
+                  </li>
+                  <li>
+                    <a href="#save-insurance-file" class="toc-h2 toc-link" data-title="Save Insurance File">Save Insurance File</a>
+                  </li>
+                  <li>
+                    <a href="#hipaa-consent" class="toc-h2 toc-link" data-title="HIPAA Consent">HIPAA Consent</a>
+                  </li>
+                  <li>
+                    <a href="#save-hipaa-file" class="toc-h2 toc-link" data-title="Save HIPAA File">Save HIPAA File</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#session" class="toc-h1 toc-link" data-title="Session">Session</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#start-and-save-transcript" class="toc-h2 toc-link" data-title="Start and save transcript">Start and save transcript</a>
+                  </li>
+                  <li>
+                    <a href="#save-note-taking" class="toc-h2 toc-link" data-title="Save note taking">Save note taking</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#nutrition-perscription" class="toc-h1 toc-link" data-title="Nutrition Perscription">Nutrition Perscription</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#enter-a-perscription" class="toc-h2 toc-link" data-title="Enter a perscription">Enter a perscription</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#meal-plan-assignment" class="toc-h1 toc-link" data-title="Meal Plan Assignment">Meal Plan Assignment</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#enter-a-meal-plan" class="toc-h2 toc-link" data-title="Enter a meal plan">Enter a meal plan</a>
+                  </li>
+              </ul>
           </li>
           <li>
             <a href="#errors" class="toc-h1 toc-link" data-title="Errors">Errors</a>
@@ -6071,7 +6124,764 @@ The email ID should be unique. If it returns unique violation error, show a warn
 </tbody></table>
 
 <p>Make a note of the plan status. We are marking DEACTIVATED but the service should be available until the exp_date.</p>
-<h1 id='done'>----- DONE</h1><h1 id='errors'>Errors</h1>
+<h1 id='patient-intake'>Patient Intake</h1><h2 id='invite-patient'>Invite Patient</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">InvitePatient</span><span class="p">(</span><span class="w">
+  </span><span class="nv">$provider_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$email</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$onboarding_message</span><span class="p">:</span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!</span><span class="w">
+</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">insert_provider_patient</span><span class="p">(</span><span class="n">objects</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">patient_email</span><span class="p">:</span><span class="w"> </span><span class="nv">$email</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">provider_id</span><span class="p">:</span><span class="w"> </span><span class="nv">$provider_id</span><span class="p">,</span><span class="w">
+    </span><span class="n">onboarding_message</span><span class="p">:</span><span class="w"> </span><span class="nv">$onboarding_message</span><span class="p">,</span><span class="w">
+    </span><span class="n">onboarding_name</span><span class="p">:</span><span class="w"> </span><span class="nv">$name</span><span class="p">,</span><span class="w">
+  </span><span class="p">}){</span><span class="w">
+    </span><span class="n">returning</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">id</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">name</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Kay</span><span class="w"> </span><span class="n">Lim</span><span class="err">"</span><span class="w">
+  </span><span class="err">"</span><span class="n">email</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">kay</span><span class="k">@heartfulsprout</span><span class="err">.</span><span class="n">com</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">provider_id</span><span class="err">":</span><span class="w"> </span><span class="err">"9301</span><span class="n">c143</span><span class="err">-0</span><span class="n">c83</span><span class="err">-44</span><span class="n">ff</span><span class="err">-</span><span class="n">b248</span><span class="err">-4495</span><span class="n">f529306f</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">onboarding_message</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Hello</span><span class="p">!</span><span class="err">"</span><span class="p">,</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Make sure to save the provider_patient ID (returning data). Use this for invite link?</p>
+<h3 id='parameters-34'>Parameters:</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>provider_id</td>
+<td>text</td>
+<td>Provider ID generated by the database (e.g. id from provider table)</td>
+</tr>
+<tr>
+<td>name</td>
+<td>text</td>
+<td>Name of the recipient</td>
+</tr>
+<tr>
+<td>email</td>
+<td>text</td>
+<td>Email of the recipient</td>
+</tr>
+<tr>
+<td>onboarding_message</td>
+<td>text</td>
+<td>Onboarding message to send</td>
+</tr>
+</tbody></table>
+<h2 id='guardian-and-pc-registration'>Guardian and PC Registration</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">RegisterGuardianAndPC</span><span class="p">(</span><span class="w">
+  </span><span class="nv">$registrationName</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$registrationRel</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$guardians</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="n">patient_guardian_insert_input</span><span class="p">!]!,</span><span class="w"> 
+  </span><span class="nv">$pc_address</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$pc_first_name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$pc_last_name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$pc_occupation</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$pc_title</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="w">
+</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">insert_patient</span><span class="p">(</span><span class="n">objects</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">reg_name</span><span class="p">:</span><span class="w"> </span><span class="nv">$registrationName</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">reg_rel</span><span class="p">:</span><span class="w"> </span><span class="nv">$registrationRel</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">patient_pc</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">data</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">pc_first_name</span><span class="p">:</span><span class="w"> </span><span class="nv">$pc_first_name</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">pc_last_name</span><span class="p">:</span><span class="w"> </span><span class="nv">$pc_last_name</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">pc_title</span><span class="p">:</span><span class="w"> </span><span class="nv">$pc_title</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">pc_address</span><span class="p">:</span><span class="w"> </span><span class="nv">$pc_address</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">pc_occupation</span><span class="p">:</span><span class="w"> </span><span class="nv">$pc_occupation</span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">})</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">returning</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">id</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+  </span><span class="n">insert_patient_guardian</span><span class="p">(</span><span class="n">objects</span><span class="p">:</span><span class="w"> </span><span class="nv">$guardians</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">returning</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">id</span><span class="w">
+      </span><span class="n">guardian_type</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre></div>
+<blockquote>
+<p>Example Input Parameter:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">registrationName</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Kay</span><span class="w"> </span><span class="n">Lim</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">registrationRel</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Mother</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">pc_address</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">somewhere</span><span class="w"> </span><span class="n">address</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">pc_first_name</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Beth</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">pc_last_name</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Conlon</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">pc_occupation</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">RDN</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">pc_title</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">RDN</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">guardians</span><span class="err">":</span><span class="w"> </span><span class="err">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="err">"</span><span class="n">first_name</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Kay</span><span class="err">"</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">last_name</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Lim</span><span class="err">"</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">address</span><span class="err">":"1035</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="n">address</span><span class="p">,</span><span class="w"> </span><span class="n">chicago</span><span class="p">,</span><span class="w"> </span><span class="n">IL</span><span class="w"> </span><span class="err">60606"</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">birthday</span><span class="err">":"1986/03/29"</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">home_number</span><span class="err">":</span><span class="w"> </span><span class="n">null</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">mobile_number</span><span class="err">":</span><span class="w"> </span><span class="n">null</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">gender</span><span class="err">":"</span><span class="n">FEMALE</span><span class="err">"</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">relationship</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Mother</span><span class="err">"</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">relationship_status</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Married</span><span class="err">"</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">occupation</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Founder</span><span class="err">"</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">work_hr_per_wk</span><span class="err">":</span><span class="w"> </span><span class="err">"60"</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">note</span><span class="err">":"</span><span class="n">very</span><span class="w"> </span><span class="n">healthy</span><span class="err">"</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">guardian_type</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">PRIMARY</span><span class="err">"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="err">"</span><span class="n">first_name</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">TESTTEST</span><span class="err">"</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">last_name</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">TEST</span><span class="err">"</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">address</span><span class="err">":"1035</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="n">address</span><span class="p">,</span><span class="w"> </span><span class="n">chicago</span><span class="p">,</span><span class="w"> </span><span class="n">IL</span><span class="w"> </span><span class="err">60606"</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">birthday</span><span class="err">":"1987/03/12"</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">home_number</span><span class="err">":</span><span class="w"> </span><span class="n">null</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">mobile_number</span><span class="err">":</span><span class="w"> </span><span class="n">null</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">gender</span><span class="err">":"</span><span class="n">MALE</span><span class="err">"</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">relationship</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Father</span><span class="err">"</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">relationship_status</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Married</span><span class="err">"</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">occupation</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Founder</span><span class="err">"</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">work_hr_per_wk</span><span class="err">":</span><span class="w"> </span><span class="err">"60"</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">note</span><span class="err">":</span><span class="w"> </span><span class="n">null</span><span class="p">,</span><span class="w">
+      </span><span class="err">"</span><span class="n">guardian_type</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">EMERGENCY</span><span class="err">"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="err">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='parameters-35'>Parameters:</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>registrationName</td>
+<td>text</td>
+<td>The name of the person filling out the form</td>
+</tr>
+<tr>
+<td>registrationRel</td>
+<td>text</td>
+<td>Relationship of this person to the patient.</td>
+</tr>
+<tr>
+<td>guardians</td>
+<td>list of objects</td>
+<td>See the example parameters to see the field names</td>
+</tr>
+<tr>
+<td>pc_address</td>
+<td>text</td>
+<td>Address of primary care</td>
+</tr>
+<tr>
+<td>pc_first_name</td>
+<td>text</td>
+<td>First name of primary care doctor</td>
+</tr>
+<tr>
+<td>pc_last_name</td>
+<td>text</td>
+<td>Last name of primary care doctor</td>
+</tr>
+<tr>
+<td>pc_occupation</td>
+<td>text</td>
+<td>Occupation of the primary care doctor</td>
+</tr>
+<tr>
+<td>pc_title</td>
+<td>text</td>
+<td>MD, RDN, etc. title of the doctor</td>
+</tr>
+</tbody></table>
+
+<aside>
+This step must happen before registrating patient. Make sure to save the output because it will be needed for patient registration.
+</aside>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">data</span><span class="err">":</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="err">"</span><span class="n">insert_patient</span><span class="err">":</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="err">"</span><span class="n">returning</span><span class="err">":</span><span class="w"> </span><span class="err">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="err">"</span><span class="n">id</span><span class="err">":</span><span class="w"> </span><span class="err">"814</span><span class="n">eed3d</span><span class="err">-</span><span class="n">c6a3</span><span class="err">-4</span><span class="n">efe</span><span class="err">-</span><span class="n">a392</span><span class="err">-74</span><span class="n">ba3f0b59b4</span><span class="err">"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="err">]</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="err">"</span><span class="n">insert_patient_guardian</span><span class="err">":</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="err">"</span><span class="n">returning</span><span class="err">":</span><span class="w"> </span><span class="err">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="err">"</span><span class="n">id</span><span class="err">":</span><span class="w"> </span><span class="err">"4</span><span class="n">c00c6cb</span><span class="err">-571</span><span class="n">b</span><span class="err">-4</span><span class="n">f75</span><span class="err">-92</span><span class="n">c2</span><span class="err">-3114</span><span class="n">b31a8752</span><span class="err">"</span><span class="p">,</span><span class="w">
+          </span><span class="err">"</span><span class="n">guardian_type</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">PRIMARY</span><span class="err">"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="err">"</span><span class="n">id</span><span class="err">":</span><span class="w"> </span><span class="err">"180</span><span class="n">a389c</span><span class="err">-04</span><span class="n">cb</span><span class="err">-4</span><span class="n">b54</span><span class="err">-</span><span class="n">b59f</span><span class="err">-3</span><span class="n">a47d6b7515b</span><span class="err">"</span><span class="p">,</span><span class="w">
+          </span><span class="err">"</span><span class="n">guardian_type</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">EMERGENCY</span><span class="err">"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="err">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>The output should look like the example on the right. We need all the IDs in the next query.</p>
+<h2 id='patient-registration'>Patient Registration</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">RegisterPatient</span><span class="p">(</span><span class="w">
+  </span><span class="nv">$id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$first_name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$middle_name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$last_name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$preferred_name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$birthday</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$sex</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$birth_country</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$home_address</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$billing_address</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$guardian1</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$guardian2</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$emergency_contact</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$referred_by</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$referral_reason</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$source</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$contact_permission</span><span class="p">:</span><span class="w"> </span><span class="nb">Boolean</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$primary_care</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">update_patient</span><span class="p">(</span><span class="w">
+    </span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$id</span><span class="p">}},</span><span class="w"> 
+    </span><span class="n">_set</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">first_name</span><span class="p">:</span><span class="w"> </span><span class="nv">$first_name</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">middle_name</span><span class="p">:</span><span class="w"> </span><span class="nv">$middle_name</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">last_name</span><span class="p">:</span><span class="w"> </span><span class="nv">$last_name</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">preferred_name</span><span class="p">:</span><span class="w"> </span><span class="nv">$preferred_name</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">birthday</span><span class="p">:</span><span class="w"> </span><span class="nv">$birthday</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">sex</span><span class="p">:</span><span class="w"> </span><span class="nv">$sex</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">birth_country</span><span class="p">:</span><span class="w"> </span><span class="nv">$birth_country</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">home_address</span><span class="p">:</span><span class="w"> </span><span class="nv">$home_address</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">billing_address</span><span class="p">:</span><span class="w"> </span><span class="nv">$billing_address</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">guardian1</span><span class="p">:</span><span class="w"> </span><span class="nv">$guardian1</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">guardian2</span><span class="p">:</span><span class="w"> </span><span class="nv">$guardian2</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">emergency_contact</span><span class="p">:</span><span class="w"> </span><span class="nv">$emergency_contact</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">referred_by</span><span class="p">:</span><span class="w"> </span><span class="nv">$referred_by</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">referral_reason</span><span class="p">:</span><span class="w"> </span><span class="nv">$referral_reason</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">source</span><span class="p">:</span><span class="w"> </span><span class="nv">$source</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">primary_care</span><span class="p">:</span><span class="w"> </span><span class="nv">$primary_care</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">contact_permission</span><span class="p">:</span><span class="w"> </span><span class="nv">$contact_permission</span><span class="w">
+    </span><span class="p">})</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="n">returning</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="n">id</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">id</span><span class="err">":</span><span class="w"> </span><span class="err">"814</span><span class="n">eed3d</span><span class="err">-</span><span class="n">c6a3</span><span class="err">-4</span><span class="n">efe</span><span class="err">-</span><span class="n">a392</span><span class="err">-74</span><span class="n">ba3f0b59b4</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">first_name</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Hannah</span><span class="err">"</span><span class="p">,</span><span class="w">
+    </span><span class="err">"</span><span class="n">middle_name</span><span class="err">":</span><span class="w"> </span><span class="n">null</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">last_name</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Kim</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">preferred_name</span><span class="err">":</span><span class="w"> </span><span class="n">null</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">birthday</span><span class="err">":</span><span class="w"> </span><span class="err">"2020-04-14"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">sex</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">FEMALE</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">birth_country</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">USA</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">home_address</span><span class="err">":</span><span class="w"> </span><span class="err">"1035</span><span class="w"> </span><span class="n">somewhere</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">US</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">billing_address</span><span class="err">":</span><span class="w"> </span><span class="err">"1035</span><span class="w"> </span><span class="n">somewhere</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">US</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">guardian1</span><span class="err">":</span><span class="w"> </span><span class="err">"4</span><span class="n">c00c6cb</span><span class="err">-571</span><span class="n">b</span><span class="err">-4</span><span class="n">f75</span><span class="err">-92</span><span class="n">c2</span><span class="err">-3114</span><span class="n">b31a8752</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">guardian2</span><span class="err">":</span><span class="w"> </span><span class="err">"4</span><span class="n">c00c6cb</span><span class="err">-571</span><span class="n">b</span><span class="err">-4</span><span class="n">f75</span><span class="err">-92</span><span class="n">c2</span><span class="err">-3114</span><span class="n">b31a8752</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">emergency_contact</span><span class="err">":</span><span class="w"> </span><span class="err">"180</span><span class="n">a389c</span><span class="err">-04</span><span class="n">cb</span><span class="err">-4</span><span class="n">b54</span><span class="err">-</span><span class="n">b59f</span><span class="err">-3</span><span class="n">a47d6b7515b</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">referred_by</span><span class="err">":</span><span class="w"> </span><span class="n">null</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">referral_reason</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Picky</span><span class="w"> </span><span class="n">eating</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">source</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Social</span><span class="w"> </span><span class="n">Media</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">contact_permission</span><span class="err">":</span><span class="w"> </span><span class="n">true</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">primary_care</span><span class="err">":</span><span class="w"> </span><span class="n">null</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre></div><h3 id='parameters-36'>Parameters:</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>uuid</td>
+<td>Patient ID generated from Guardian Registration (step above)</td>
+</tr>
+<tr>
+<td>first_name</td>
+<td>text</td>
+<td>First name of the child</td>
+</tr>
+<tr>
+<td>middle_name</td>
+<td>text</td>
+<td>Middle name of the child</td>
+</tr>
+<tr>
+<td>last_name</td>
+<td>text</td>
+<td>Last name of the child</td>
+</tr>
+<tr>
+<td>preferred_name</td>
+<td>text</td>
+<td>Preferred name of the child</td>
+</tr>
+<tr>
+<td>birthday</td>
+<td>text</td>
+<td>Birthday. Note that this is a text field. Please use a datepicker to ensure data format consistancy</td>
+</tr>
+<tr>
+<td>sex</td>
+<td>text</td>
+<td>Sex (when born). MALE or FEMALE</td>
+</tr>
+<tr>
+<td>birth_country</td>
+<td>text</td>
+<td>Country of birth</td>
+</tr>
+<tr>
+<td>home_address</td>
+<td>text</td>
+<td>Concatenated string of home address</td>
+</tr>
+<tr>
+<td>billing_address</td>
+<td>text</td>
+<td>Concatenated string of billing address</td>
+</tr>
+<tr>
+<td>guardian1</td>
+<td>uuid</td>
+<td>ID of primary guardian</td>
+</tr>
+<tr>
+<td>guardian2</td>
+<td>uuid</td>
+<td>ID of second guardian</td>
+</tr>
+<tr>
+<td>emergency_contact</td>
+<td>uuid</td>
+<td>ID emergency contact</td>
+</tr>
+<tr>
+<td>referred_by</td>
+<td>text</td>
+<td>Referred by</td>
+</tr>
+<tr>
+<td>referral_reason</td>
+<td>text</td>
+<td>Reason for referral</td>
+</tr>
+<tr>
+<td>source</td>
+<td>text</td>
+<td>Where did they hear about the provider?</td>
+</tr>
+<tr>
+<td>primary_care</td>
+<td>uuid</td>
+<td>ID of primary care provider</td>
+</tr>
+<tr>
+<td>contact_permission</td>
+<td>boolean</td>
+<td>Whether the user agrees to get contacted</td>
+</tr>
+</tbody></table>
+<h2 id='save-registration-file'>Save Registration File</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">SaveRegistrationPDF</span><span class="p">(</span><span class="w">
+  </span><span class="nv">$provider_patient_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w">
+  </span><span class="nv">$reg_file</span><span class="p">:</span><span class="nb">String</span><span class="p">!)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">update_provider_patient</span><span class="p">(</span><span class="w">
+    </span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$provider_patient_id</span><span class="p">}},</span><span class="w"> 
+    </span><span class="n">_set</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">reg_file</span><span class="p">:</span><span class="w"> </span><span class="nv">$reg_file</span><span class="p">,</span><span class="w"> </span><span class="n">reg_status</span><span class="p">:</span><span class="w"> </span><span class="n">COMPLETE</span><span class="p">}){</span><span class="w">
+      </span><span class="n">affected_rows</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">provider_patient_id</span><span class="err">":</span><span class="w"> </span><span class="err">"077</span><span class="n">a3f74</span><span class="err">-</span><span class="n">cbc5</span><span class="err">-49</span><span class="n">ae</span><span class="err">-909</span><span class="n">c</span><span class="err">-3</span><span class="n">fc15f511c90</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">reg_file</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">S3BUCKETADDRESS</span><span class="err">"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='parameters-37'>Parameters:</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>provider_patient_id</td>
+<td>uuid</td>
+<td>ID of provider_patient table</td>
+</tr>
+<tr>
+<td>reg_file</td>
+<td>text</td>
+<td>File key in S3 bucket</td>
+</tr>
+</tbody></table>
+
+<aside>
+Let's come back to the uploading files later.
+</aside>
+<h2 id='insurance-form'>Insurance Form</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">RegisterInsurance</span><span class="p">(</span><span class="w">
+  </span><span class="nv">$first_name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w">
+  </span><span class="nv">$last_name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$policy_holder</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$birthday</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$gender</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$phone_number</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$address</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$insurance_company</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$payer_id</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$coverage_type</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$member_id</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$plan_id</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$group_id</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$copay</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$deductible</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$primary_care</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$authorization_agreed</span><span class="p">:</span><span class="w"> </span><span class="nb">Boolean</span><span class="p">!</span><span class="w">
+</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">insert_patient_insurance</span><span class="p">(</span><span class="n">objects</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">first_name</span><span class="p">:</span><span class="w"> </span><span class="nv">$first_name</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">last_name</span><span class="p">:</span><span class="w"> </span><span class="nv">$last_name</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">policy_holder</span><span class="p">:</span><span class="w"> </span><span class="nv">$policy_holder</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">birthday</span><span class="p">:</span><span class="w"> </span><span class="nv">$birthday</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">gender</span><span class="p">:</span><span class="w"> </span><span class="nv">$gender</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">phone_number</span><span class="p">:</span><span class="w"> </span><span class="nv">$phone_number</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">address</span><span class="p">:</span><span class="w"> </span><span class="nv">$address</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">insurance_company</span><span class="p">:</span><span class="w"> </span><span class="nv">$insurance_company</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">payer_id</span><span class="p">:</span><span class="w"> </span><span class="nv">$payer_id</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">coverage_type</span><span class="p">:</span><span class="w"> </span><span class="nv">$coverage_type</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">member_id</span><span class="p">:</span><span class="w"> </span><span class="nv">$member_id</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">plan_id</span><span class="p">:</span><span class="w"> </span><span class="nv">$plan_id</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">group_id</span><span class="p">:</span><span class="w"> </span><span class="nv">$group_id</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">copay</span><span class="p">:</span><span class="w"> </span><span class="nv">$copay</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">deductible</span><span class="p">:</span><span class="w"> </span><span class="nv">$deductible</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">primary_care</span><span class="p">:</span><span class="w"> </span><span class="nv">$primary_care</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">authorization_agreed</span><span class="p">:</span><span class="w"> </span><span class="nv">$authorization_agreed</span><span class="w">
+  </span><span class="p">}){</span><span class="w">
+    </span><span class="n">returning</span><span class="p">{</span><span class="w">
+      </span><span class="n">id</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">first_name</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Kay</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">last_name</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Lim</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">policy_holder</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Kay</span><span class="w"> </span><span class="n">Lim</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">birthday</span><span class="err">":</span><span class="w"> </span><span class="err">"1987-04-14"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">gender</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">FEMALE</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">phone_number</span><span class="err">":</span><span class="w"> </span><span class="err">"000-000-0000"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">address</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">somewhere</span><span class="p">,</span><span class="w"> </span><span class="n">city</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="err">00000"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">insurance_company</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Insurance</span><span class="w"> </span><span class="n">company</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">payer_id</span><span class="err">":</span><span class="w"> </span><span class="err">"00000"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">coverage_type</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Premium</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">member_id</span><span class="err">":</span><span class="w"> </span><span class="err">"00000"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">plan_id</span><span class="err">":</span><span class="w"> </span><span class="err">"00000"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">group_id</span><span class="err">":</span><span class="w"> </span><span class="err">"00000"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">copay</span><span class="err">":</span><span class="w"> </span><span class="err">"50"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">deductible</span><span class="err">":"1000"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">primary_care</span><span class="err">":</span><span class="w"> </span><span class="n">null</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">authorization_agreed</span><span class="err">":</span><span class="w"> </span><span class="n">true</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h2 id='save-insurance-file'>Save Insurance File</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">SaveInsurancePDF</span><span class="p">(</span><span class="w">
+  </span><span class="nv">$provider_patient_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w">
+  </span><span class="nv">$ins_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w">
+  </span><span class="nv">$ins_file</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">update_provider_patient</span><span class="p">(</span><span class="w">
+    </span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$provider_patient_id</span><span class="p">}},</span><span class="w"> 
+    </span><span class="n">_set</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">ins_id</span><span class="p">:</span><span class="w"> </span><span class="nv">$ins_id</span><span class="p">,</span><span class="w"> </span><span class="n">ins_file</span><span class="p">:</span><span class="w"> </span><span class="nv">$ins_file</span><span class="p">,</span><span class="w"> </span><span class="n">ins_status</span><span class="p">:</span><span class="w"> </span><span class="n">COMPLETE</span><span class="p">}){</span><span class="w">
+      </span><span class="n">affected_rows</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">provider_patient_id</span><span class="err">":</span><span class="w"> </span><span class="err">"077</span><span class="n">a3f74</span><span class="err">-</span><span class="n">cbc5</span><span class="err">-49</span><span class="n">ae</span><span class="err">-909</span><span class="n">c</span><span class="err">-3</span><span class="n">fc15f511c90</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">ins_id</span><span class="err">":</span><span class="w"> </span><span class="err">"077</span><span class="n">a3f74</span><span class="err">-</span><span class="n">cbc5</span><span class="err">-49</span><span class="n">ae</span><span class="err">-909</span><span class="n">c</span><span class="err">-3</span><span class="n">fc15f511c90</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">ins_fild</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">S3BUCKETADDRESS</span><span class="err">"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='parameters-38'>Parameters:</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>provider_patient_id</td>
+<td>uuid</td>
+<td>ID of provider_patient table</td>
+</tr>
+<tr>
+<td>ins_id</td>
+<td>uuid</td>
+<td>ID from patient_ins table</td>
+</tr>
+<tr>
+<td>ins_file</td>
+<td>text</td>
+<td>File key in S3 bucket</td>
+</tr>
+</tbody></table>
+
+<aside>
+Let's come back to the uploading files later.
+</aside>
+<h2 id='hipaa-consent'>HIPAA Consent</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">HIPAAConsent</span><span class="p">(</span><span class="w">
+  </span><span class="nv">$first_name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w">
+  </span><span class="nv">$last_name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$relationship</span><span class="p">:</span><span class="nb">String</span><span class="p">!</span><span class="w">
+</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">insert_patient_hipaa</span><span class="p">(</span><span class="n">objects</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">first_name</span><span class="p">:</span><span class="w"> </span><span class="nv">$first_name</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">last_name</span><span class="p">:</span><span class="w"> </span><span class="nv">$last_name</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">relationship</span><span class="p">:</span><span class="w"> </span><span class="nv">$relationship</span><span class="w">
+  </span><span class="p">}){</span><span class="w">
+    </span><span class="n">returning</span><span class="p">{</span><span class="w">
+      </span><span class="n">id</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">first_name</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Kay</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">last_name</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Lim</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">relationship</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Mother</span><span class="err">"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h2 id='save-hipaa-file'>Save HIPAA File</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">SaveHIPAAPDF</span><span class="p">(</span><span class="w">
+  </span><span class="nv">$provider_patient_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w">
+  </span><span class="nv">$hipaa_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w">
+  </span><span class="nv">$hipaa_file</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">update_provider_patient</span><span class="p">(</span><span class="w">
+    </span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$provider_patient_id</span><span class="p">}},</span><span class="w"> 
+    </span><span class="n">_set</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">hipaa_id</span><span class="p">:</span><span class="w"> </span><span class="nv">$hipaa_id</span><span class="p">,</span><span class="w"> </span><span class="n">hipaa_file</span><span class="p">:</span><span class="w"> </span><span class="nv">$hipaa_file</span><span class="p">,</span><span class="w"> </span><span class="n">hipaa_status</span><span class="p">:</span><span class="w"> </span><span class="n">COMPLETE</span><span class="p">}){</span><span class="w">
+      </span><span class="n">affected_rows</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input parameter:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">provider_patient_id</span><span class="err">":</span><span class="w"> </span><span class="err">"077</span><span class="n">a3f74</span><span class="err">-</span><span class="n">cbc5</span><span class="err">-49</span><span class="n">ae</span><span class="err">-909</span><span class="n">c</span><span class="err">-3</span><span class="n">fc15f511c90</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">hipaa_id</span><span class="err">":</span><span class="w"> </span><span class="err">"077</span><span class="n">a3f74</span><span class="err">-</span><span class="n">cbc5</span><span class="err">-49</span><span class="n">ae</span><span class="err">-909</span><span class="n">c</span><span class="err">-3</span><span class="n">fc15f511c90</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">hipaa_fild</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">S3BUCKETADDRESS</span><span class="err">"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='parameters-39'>Parameters:</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>provider_patient_id</td>
+<td>uuid</td>
+<td>ID of provider_patient table</td>
+</tr>
+<tr>
+<td>hipaa_id</td>
+<td>uuid</td>
+<td>ID from patient_hipaa table</td>
+</tr>
+<tr>
+<td>hipaa_file</td>
+<td>text</td>
+<td>File key in S3 bucket</td>
+</tr>
+</tbody></table>
+
+<aside>
+Let's come back to the uploading files later.
+</aside>
+<h1 id='session'>Session</h1><h2 id='start-and-save-transcript'>Start and save transcript</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">SaveTranscript</span><span class="p">(</span><span class="w">
+  </span><span class="nv">$start_time</span><span class="p">:</span><span class="w"> </span><span class="n">timestamptz</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$end_time</span><span class="p">:</span><span class="w"> </span><span class="n">timestamptz</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$transcript_type</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$transcript</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$provider_patient_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">insert_provider_session</span><span class="p">(</span><span class="n">objects</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">start_time</span><span class="p">:</span><span class="w"> </span><span class="nv">$start_time</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">end_time</span><span class="p">:</span><span class="w"> </span><span class="nv">$end_time</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">transcript_type</span><span class="p">:</span><span class="w"> </span><span class="nv">$transcript_type</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">transcript</span><span class="p">:</span><span class="w"> </span><span class="nv">$transcript</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">provider_patient_id</span><span class="p">:</span><span class="w"> </span><span class="nv">$provider_patient_id</span><span class="w">
+  </span><span class="p">}){</span><span class="w">
+    </span><span class="n">returning</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">id</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">start_time</span><span class="err">":</span><span class="w"> </span><span class="err">"2024-12-10</span><span class="n">T13</span><span class="p">:</span><span class="err">45:00.000</span><span class="n">Z</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">end_time</span><span class="err">":</span><span class="w"> </span><span class="err">"2024-12-10</span><span class="n">T14</span><span class="p">:</span><span class="err">30:00.000</span><span class="n">Z</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">transcript_type</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">live</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">transcript</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">transcript</span><span class="w"> </span><span class="n">here</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">provider_patient_id</span><span class="err">":</span><span class="w"> </span><span class="err">"077</span><span class="n">a3f74</span><span class="err">-</span><span class="n">cbc5</span><span class="err">-49</span><span class="n">ae</span><span class="err">-909</span><span class="n">c</span><span class="err">-3</span><span class="n">fc15f511c90</span><span class="err">"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h2 id='save-note-taking'>Save note taking</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">SaveSessionNotes</span><span class="p">(</span><span class="w">
+  </span><span class="nv">$id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$intervention_notes</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$intervention_summary</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$notes</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$notes_type</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> 
+  </span><span class="nv">$patient_notes</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="w">
+</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">update_provider_session</span><span class="p">(</span><span class="w">
+    </span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$id</span><span class="p">}},</span><span class="w"> 
+    </span><span class="n">_set</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">intervention_notes</span><span class="p">:</span><span class="w"> </span><span class="nv">$intervention_notes</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">intervention_summary</span><span class="p">:</span><span class="w"> </span><span class="nv">$intervention_summary</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">notes</span><span class="p">:</span><span class="w"> </span><span class="nv">$notes</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">notes_type</span><span class="p">:</span><span class="w"> </span><span class="nv">$notes_type</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">patient_notes</span><span class="p">:</span><span class="w"> </span><span class="nv">$patient_notes</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">){</span><span class="w">
+    </span><span class="n">affected_rows</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre></div>
+<blockquote>
+<p>Example input</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">id</span><span class="err">":</span><span class="w"> </span><span class="err">"7738</span><span class="n">efac</span><span class="err">-</span><span class="n">a2da</span><span class="err">-4393-8</span><span class="n">ec4</span><span class="err">-57</span><span class="n">a9c6a8a878</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">intervention_notes</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">intervention</span><span class="w"> </span><span class="n">notes</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">intervention_summary</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">interventino</span><span class="w"> </span><span class="n">summary</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">notes</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">notes</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">notes_type</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">SOAP</span><span class="err">"</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">patient_notes</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">patient</span><span class="w"> </span><span class="n">notes</span><span class="err">"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h1 id='nutrition-perscription'>Nutrition Perscription</h1><h2 id='enter-a-perscription'>Enter a perscription</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">NutritionPerscription</span><span class="p">(</span><span class="w">
+  </span><span class="nv">$objects</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="n">prescription_nutrition_insert_input</span><span class="p">!]!)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">insert_prescription_nutrition</span><span class="p">(</span><span class="n">objects</span><span class="p">:</span><span class="w"> </span><span class="nv">$objects</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">returning</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">id</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input
+<code>graphql
+{
+  &quot;objects&quot;: [{
+    &quot;activity_level&quot;: &quot;ACTIVE&quot;,
+    &quot;added_sugar_G&quot;: 0,
+    &quot;age&quot;:180,
+    &quot;calcium_MG&quot;: 1,
+    &quot;calories_KCAL&quot;: 800,
+    &quot;carbohydrate_G&quot;: 1,
+    &quot;cholesterol_MG&quot;: 0,
+    &quot;choline_MG&quot;: 1,
+    &quot;folatedfe_UG&quot;: 1,
+    &quot;height_cm&quot;: 80,
+    &quot;iron_MG&quot;: 1,
+    &quot;magnesium_MG&quot;: 1,
+    &quot;niacin_MG&quot;: 1,
+    &quot;omega3_G&quot;: 1,
+    &quot;omega6_G&quot;: 1,
+    &quot;phosphorus_MG&quot;: 1,
+    &quot;potassium_MG&quot;: 1,
+    &quot;protein_G&quot;: 1,
+    &quot;provider_patient_id&quot;: &quot;077a3f74-cbc5-49ae-909c-3fc15f511c90&quot;,
+    &quot;provider_session_id&quot;:&quot;7738efac-a2da-4393-8ec4-57a9c6a8a878&quot;,
+    &quot;riboflavin_MG&quot;: 1,
+    &quot;saturated_fatty_acids_G&quot;: 1,
+    &quot;sodium_MG&quot;: 1,
+    &quot;thiamin_MG&quot;: 1,
+    &quot;total_dietary_fiber_G&quot;: 1,
+    &quot;total_fatty_acids_G&quot;: 1,
+    &quot;total_lipid_G&quot;: 1,
+    &quot;total_sugar_G&quot;: 1,
+    &quot;vitamina_UG&quot;: 1,
+    &quot;vitaminb12_UG&quot;: 1,
+    &quot;vitaminc_MG&quot;: 1,
+    &quot;vitamind_UG&quot;: 1,
+    &quot;vitamine_MG&quot;: 1,
+    &quot;vitamink_UG&quot;: 1,
+    &quot;weight_kg&quot;: 8,
+    &quot;zinc_MG&quot;: 1
+  }]
+}
+</code></p>
+</blockquote>
+
+<p>Note that this is typically within the session flow, but clinicians should be able to adjust nutrition outside the session.</p>
+<h1 id='meal-plan-assignment'>Meal Plan Assignment</h1><h2 id='enter-a-meal-plan'>Enter a meal plan</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">MealPlanPerscription</span><span class="p">(</span><span class="nv">$objects</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="n">prescription_meal_plan_insert_input</span><span class="p">!]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{})</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">insert_prescription_meal_plan</span><span class="p">(</span><span class="n">objects</span><span class="p">:</span><span class="w"> </span><span class="nv">$objects</span><span class="p">){</span><span class="w">
+    </span><span class="n">returning</span><span class="p">{</span><span class="w">
+      </span><span class="n">id</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p>Example input </p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">objects</span><span class="err">":</span><span class="w"> </span><span class="err">[</span><span class="p">{</span><span class="w">
+    </span><span class="err">"</span><span class="n">provider_patient_id</span><span class="err">":</span><span class="w"> </span><span class="err">"077</span><span class="n">a3f74</span><span class="err">-</span><span class="n">cbc5</span><span class="err">-49</span><span class="n">ae</span><span class="err">-909</span><span class="n">c</span><span class="err">-3</span><span class="n">fc15f511c90</span><span class="err">"</span><span class="p">,</span><span class="w">
+    </span><span class="err">"</span><span class="n">provider_session_id</span><span class="err">":"7738</span><span class="n">efac</span><span class="err">-</span><span class="n">a2da</span><span class="err">-4393-8</span><span class="n">ec4</span><span class="err">-57</span><span class="n">a9c6a8a878</span><span class="err">"</span><span class="p">,</span><span class="w">
+    </span><span class="err">"</span><span class="n">recipe_id</span><span class="err">":</span><span class="w"> </span><span class="err">"58</span><span class="n">fc5d0a</span><span class="err">-93</span><span class="n">e1</span><span class="err">-4762-</span><span class="n">b890</span><span class="err">-</span><span class="n">ffc17c9a4179</span><span class="err">"</span><span class="p">,</span><span class="w">
+    </span><span class="err">"</span><span class="n">planned_at</span><span class="err">":</span><span class="w"> </span><span class="err">"2024-12-10"</span><span class="w">
+  </span><span class="p">},{</span><span class="w">
+    </span><span class="err">"</span><span class="n">provider_patient_id</span><span class="err">":</span><span class="w"> </span><span class="err">"077</span><span class="n">a3f74</span><span class="err">-</span><span class="n">cbc5</span><span class="err">-49</span><span class="n">ae</span><span class="err">-909</span><span class="n">c</span><span class="err">-3</span><span class="n">fc15f511c90</span><span class="err">"</span><span class="p">,</span><span class="w">
+    </span><span class="err">"</span><span class="n">provider_session_id</span><span class="err">":"7738</span><span class="n">efac</span><span class="err">-</span><span class="n">a2da</span><span class="err">-4393-8</span><span class="n">ec4</span><span class="err">-57</span><span class="n">a9c6a8a878</span><span class="err">"</span><span class="p">,</span><span class="w">
+    </span><span class="err">"</span><span class="n">recipe_id</span><span class="err">":</span><span class="w"> </span><span class="err">"58</span><span class="n">fc5d0a</span><span class="err">-93</span><span class="n">e1</span><span class="err">-4762-</span><span class="n">b890</span><span class="err">-</span><span class="n">ffc17c9a4179</span><span class="err">"</span><span class="p">,</span><span class="w">
+    </span><span class="err">"</span><span class="n">planned_at</span><span class="err">":</span><span class="w"> </span><span class="err">"2024-12-11"</span><span class="w">
+  </span><span class="p">},{</span><span class="w">
+    </span><span class="err">"</span><span class="n">provider_patient_id</span><span class="err">":</span><span class="w"> </span><span class="err">"077</span><span class="n">a3f74</span><span class="err">-</span><span class="n">cbc5</span><span class="err">-49</span><span class="n">ae</span><span class="err">-909</span><span class="n">c</span><span class="err">-3</span><span class="n">fc15f511c90</span><span class="err">"</span><span class="p">,</span><span class="w">
+    </span><span class="err">"</span><span class="n">provider_session_id</span><span class="err">":"7738</span><span class="n">efac</span><span class="err">-</span><span class="n">a2da</span><span class="err">-4393-8</span><span class="n">ec4</span><span class="err">-57</span><span class="n">a9c6a8a878</span><span class="err">"</span><span class="p">,</span><span class="w">
+    </span><span class="err">"</span><span class="n">recipe_id</span><span class="err">":</span><span class="w"> </span><span class="err">"58</span><span class="n">fc5d0a</span><span class="err">-93</span><span class="n">e1</span><span class="err">-4762-</span><span class="n">b890</span><span class="err">-</span><span class="n">ffc17c9a4179</span><span class="err">"</span><span class="p">,</span><span class="w">
+    </span><span class="err">"</span><span class="n">planned_at</span><span class="err">":</span><span class="w"> </span><span class="err">"2024-12-12"</span><span class="w">
+  </span><span class="p">}</span><span class="err">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h1 id='errors'>Errors</h1>
 <aside class="notice">
 This error section is stored in a separate file in <code>includes/_errors.md</code>. Slate allows you to optionally separate out your docs into many files...just save them to the <code>includes</code> folder and add them to the top of your <code>index.md</code>'s frontmatter. Files are included in the order listed.
 </aside>

@@ -586,6 +586,20 @@
               </ul>
           </li>
           <li>
+            <a href="#dashboard" class="toc-h1 toc-link" data-title="Dashboard">Dashboard</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#get-patient-list-for-overview" class="toc-h2 toc-link" data-title="Get patient list for overview">Get patient list for overview</a>
+                  </li>
+                  <li>
+                    <a href="#patient-detail" class="toc-h2 toc-link" data-title="Patient Detail">Patient Detail</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#done" class="toc-h1 toc-link" data-title="--- DONE">--- DONE</a>
+          </li>
+          <li>
             <a href="#errors" class="toc-h1 toc-link" data-title="Errors">Errors</a>
           </li>
       </ul>
@@ -6340,6 +6354,7 @@ This step must happen before registrating patient. Make sure to save the output 
 <p>The output should look like the example on the right. We need all the IDs in the next query.</p>
 <h2 id='patient-registration'>Patient Registration</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">RegisterPatient</span><span class="p">(</span><span class="w">
   </span><span class="nv">$id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w"> 
+  </span><span class="nv">$provider_patient_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w">
   </span><span class="nv">$first_name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
   </span><span class="nv">$middle_name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> 
   </span><span class="nv">$last_name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">!,</span><span class="w"> 
@@ -6357,6 +6372,11 @@ This step must happen before registrating patient. Make sure to save the output 
   </span><span class="nv">$source</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> 
   </span><span class="nv">$contact_permission</span><span class="p">:</span><span class="w"> </span><span class="nb">Boolean</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> 
   </span><span class="nv">$primary_care</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">update_provider_patient</span><span class="p">(</span><span class="n">where</span><span class="p">:{</span><span class="n">id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="nv">$provider_patient_id</span><span class="p">}},</span><span class="w"> </span><span class="n">_set</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">patient_id</span><span class="p">:</span><span class="nv">$id</span><span class="p">}){</span><span class="w">
+      </span><span class="n">returning</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="n">id</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
   </span><span class="n">update_patient</span><span class="p">(</span><span class="w">
     </span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$id</span><span class="p">}},</span><span class="w"> 
     </span><span class="n">_set</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
@@ -6407,7 +6427,8 @@ This step must happen before registrating patient. Make sure to save the output 
   </span><span class="err">"</span><span class="n">referral_reason</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Picky</span><span class="w"> </span><span class="n">eating</span><span class="err">"</span><span class="p">,</span><span class="w">
   </span><span class="err">"</span><span class="n">source</span><span class="err">":</span><span class="w"> </span><span class="err">"</span><span class="n">Social</span><span class="w"> </span><span class="n">Media</span><span class="err">"</span><span class="p">,</span><span class="w">
   </span><span class="err">"</span><span class="n">contact_permission</span><span class="err">":</span><span class="w"> </span><span class="n">true</span><span class="p">,</span><span class="w">
-  </span><span class="err">"</span><span class="n">primary_care</span><span class="err">":</span><span class="w"> </span><span class="n">null</span><span class="w">
+  </span><span class="err">"</span><span class="n">primary_care</span><span class="err">":</span><span class="w"> </span><span class="n">null</span><span class="p">,</span><span class="w">
+  </span><span class="err">"</span><span class="n">provider_patient_id</span><span class="err">":</span><span class="w"> </span><span class="err">"4994955</span><span class="n">a</span><span class="err">-9745-4847-</span><span class="n">a323</span><span class="err">-848028</span><span class="n">bff92a</span><span class="err">"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
 </span></code></pre></div><h3 id='parameters-36'>Parameters:</h3>
@@ -6881,7 +6902,79 @@ Let's come back to the uploading files later.
     </span><span class="err">"</span><span class="n">planned_at</span><span class="err">":</span><span class="w"> </span><span class="err">"2024-12-12"</span><span class="w">
   </span><span class="p">}</span><span class="err">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre></div><h1 id='errors'>Errors</h1>
+</span></code></pre></div><h1 id='dashboard'>Dashboard</h1><h2 id='get-patient-list-for-overview'>Get patient list for overview</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">query</span><span class="w"> </span><span class="n">GetPatientList</span><span class="p">(</span><span class="nv">$provider_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">patient</span><span class="p">(</span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">provider_patients</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">provider</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$provider_id</span><span class="p">}}}})</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">id</span><span class="w">
+    </span><span class="n">first_name</span><span class="w">
+    </span><span class="n">preferred_name</span><span class="w">
+    </span><span class="n">middle_name</span><span class="w">
+    </span><span class="n">last_name</span><span class="w">
+    </span><span class="n">birthday</span><span class="w">
+    </span><span class="n">sex</span><span class="w">
+    </span><span class="n">primary_diagnosis</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h2 id='patient-detail'>Patient Detail</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">query</span><span class="w"> </span><span class="n">GetPatientDetail</span><span class="p">(</span><span class="nv">$patient_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="n">patient</span><span class="p">(</span><span class="n">where</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="n">_eq</span><span class="p">:</span><span class="w"> </span><span class="nv">$patient_id</span><span class="p">}})</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">birth_country</span><span class="w">
+    </span><span class="n">birthday</span><span class="w">
+    </span><span class="n">home_address</span><span class="w">
+    </span><span class="n">last_name</span><span class="w">
+    </span><span class="n">middle_name</span><span class="w">
+    </span><span class="n">patientGuardianByEmergencyContact</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">first_name</span><span class="w">
+      </span><span class="n">last_name</span><span class="w">
+      </span><span class="n">home_number</span><span class="w">
+      </span><span class="n">mobile_number</span><span class="w">
+      </span><span class="n">note</span><span class="w">
+      </span><span class="n">relationship</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+    </span><span class="n">patientGuardianByGuardian2</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">first_name</span><span class="w">
+      </span><span class="n">last_name</span><span class="w">
+      </span><span class="n">note</span><span class="w">
+      </span><span class="n">birthday</span><span class="w">
+      </span><span class="n">email</span><span class="w">
+      </span><span class="n">mobile_number</span><span class="w">
+      </span><span class="n">guardian_type</span><span class="w">
+      </span><span class="n">gender</span><span class="w">
+      </span><span class="n">relationship</span><span class="w">
+      </span><span class="n">relationship_status</span><span class="w">
+      </span><span class="n">work_hr_per_wk</span><span class="w">
+      </span><span class="n">occupation</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+    </span><span class="n">patient_guardian</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="n">address</span><span class="w">
+      </span><span class="n">email</span><span class="w">
+      </span><span class="n">birthday</span><span class="w">
+      </span><span class="n">first_name</span><span class="w">
+      </span><span class="n">gender</span><span class="w">
+      </span><span class="n">guardian_type</span><span class="w">
+      </span><span class="n">last_name</span><span class="w">
+      </span><span class="n">mobile_number</span><span class="w">
+      </span><span class="n">note</span><span class="w">
+      </span><span class="n">occupation</span><span class="w">
+      </span><span class="n">relationship</span><span class="w">
+      </span><span class="n">relationship_status</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+    </span><span class="n">preferred_name</span><span class="w">
+    </span><span class="n">preferred_pronouns</span><span class="w">
+    </span><span class="n">primary_diagnosis</span><span class="w">
+    </span><span class="n">referral_reason</span><span class="w">
+    </span><span class="n">referred_by</span><span class="w">
+    </span><span class="n">sex</span><span class="w">
+    </span><span class="n">source</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre></div>
+<blockquote>
+<p>Example input</p>
+</blockquote>
+<div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="p">{</span><span class="w">
+  </span><span class="err">"</span><span class="n">patient_id</span><span class="err">":</span><span class="w"> </span><span class="err">"814</span><span class="n">eed3d</span><span class="err">-</span><span class="n">c6a3</span><span class="err">-4</span><span class="n">efe</span><span class="err">-</span><span class="n">a392</span><span class="err">-74</span><span class="n">ba3f0b59b4</span><span class="err">"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h1 id='done'>--- DONE</h1><h1 id='errors'>Errors</h1>
 <aside class="notice">
 This error section is stored in a separate file in <code>includes/_errors.md</code>. Slate allows you to optionally separate out your docs into many files...just save them to the <code>includes</code> folder and add them to the top of your <code>index.md</code>'s frontmatter. Files are included in the order listed.
 </aside>

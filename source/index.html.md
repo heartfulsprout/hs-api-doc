@@ -3739,6 +3739,25 @@ primary_care      | uuid        | ID of primary care provider
 contact_permission| boolean     | Whether the user agrees to get contacted
 
 
+## Grant Premium Access to Patient
+
+<code>
+https://api.revenuecat.com/v1/subscribers/<patient_email here>/entitlements/provider_referred/promotional
+</code>
+
+- API method: POST
+- Headers must include <code>Authorization: Bearer REVENUE_CAT_API_KEY</code>
+- Body must include:
+
+{
+
+  "start_time_ms": 1709195668093,   // current time in milliseconds
+  
+  "end_time_ms": 1738389600000      // let's just add December 31, 2026 for now.
+
+}
+
+
 ## Save Registration File
 ```graphql
 mutation SaveRegistrationPDF(

@@ -542,6 +542,9 @@
                     <a href="#patient-registration" class="toc-h2 toc-link" data-title="Patient Registration">Patient Registration</a>
                   </li>
                   <li>
+                    <a href="#grant-premium-access-to-patient" class="toc-h2 toc-link" data-title="Grant Premium Access to Patient">Grant Premium Access to Patient</a>
+                  </li>
+                  <li>
                     <a href="#save-registration-file" class="toc-h2 toc-link" data-title="Save Registration File">Save Registration File</a>
                   </li>
                   <li>
@@ -6530,6 +6533,24 @@ This step must happen before registrating patient. Make sure to save the output 
 <td>Whether the user agrees to get contacted</td>
 </tr>
 </tbody></table>
+<h2 id='grant-premium-access-to-patient'>Grant Premium Access to Patient</h2>
+<p><code>
+https://api.revenuecat.com/v1/subscribers/<patient_email here>/entitlements/provider_referred/promotional
+</code></p>
+
+<ul>
+<li>API method: POST</li>
+<li>Headers must include <code>Authorization: Bearer REVENUE_CAT_API_KEY</code></li>
+<li>Body must include:</li>
+</ul>
+
+<p>{</p>
+
+<p>&quot;start_time_ms&quot;: 1709195668093,   // current time in milliseconds</p>
+
+<p>&quot;end_time_ms&quot;: 1738389600000      // let&#39;s just add December 31, 2026 for now.</p>
+
+<p>}</p>
 <h2 id='save-registration-file'>Save Registration File</h2><div class="highlight"><pre class="highlight graphql tab-graphql"><code><span class="k">mutation</span><span class="w"> </span><span class="n">SaveRegistrationPDF</span><span class="p">(</span><span class="w">
   </span><span class="nv">$provider_patient_id</span><span class="p">:</span><span class="w"> </span><span class="n">uuid</span><span class="p">!,</span><span class="w">
   </span><span class="nv">$reg_file</span><span class="p">:</span><span class="nb">String</span><span class="p">!)</span><span class="w"> </span><span class="p">{</span><span class="w">
